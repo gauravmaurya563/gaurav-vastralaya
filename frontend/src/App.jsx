@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo, useState } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import Categories from './components/Categories'
@@ -7,182 +8,108 @@ import BookingForm from './components/BookingForm'
 import About from './components/About'
 import Footer from './components/Footer'
 import ProductModal from './components/ProductModal'
-import { Analytics } from '@vercel/analytics/react'
 
-// Fallback catalog data in case the backend is not running
-const FALLBACK_PRODUCTS = [
+const PRODUCTS = [
   {
     id: 1,
-    name: "Royal Banarasi Silk Saree",
-    description: "A magnificent crimson red Banarasi silk saree woven with genuine gold-plated zari threads. Featuring a classic paisley border and a rich pallu, perfect for bridal wear and grand celebrations.",
-    category: "Saree",
-    imageUrl: "/assets/saree_premium.png",
-    priceRange: "₹8,500 - ₹25,000",
-    fabric: "Pure Banarasi Silk",
-    occasion: "Bridal / Wedding",
-    sizes: ["Unstitched (Free Size)"]
+    name: 'Ajrakh Printed Cotton Fabric',
+    description: 'Soft breathable cotton with hand-block inspired Ajrakh motifs. Ideal for kurtas, co-ords, shirts, and relaxed everyday tailoring.',
+    category: 'Fabrics',
+    imageUrl: '/assets/shirting_fabric.png',
+    priceRange: 'Rs. 349 - Rs. 899 / meter',
+    fabric: 'Premium Cotton',
+    occasion: 'Daily and festive wear',
+    sizes: ['1 meter', '2.5 meters', 'Custom cut']
+  },
+  {
+    id: 2,
+    name: 'Banarasi Silk Saree',
+    description: 'A graceful occasion saree with rich woven texture, elegant border detailing, and a pallu made for weddings and festive evenings.',
+    category: 'Sarees',
+    imageUrl: '/assets/saree_premium.png',
+    priceRange: 'Rs. 4,999 - Rs. 18,999',
+    fabric: 'Banarasi Silk',
+    occasion: 'Wedding and celebration',
+    sizes: ['Free size', 'Blouse piece included']
+  },
+  {
+    id: 3,
+    name: 'Designer Georgette Suit Set',
+    description: 'A ready-to-style suit set with fluid drape, subtle embellishment, and a matching dupatta for polished festive dressing.',
+    category: 'Suits',
+    imageUrl: '/assets/suit_designer.png',
+    priceRange: 'Rs. 2,499 - Rs. 8,999',
+    fabric: 'Georgette',
+    occasion: 'Festive and party wear',
+    sizes: ['S', 'M', 'L', 'XL', 'XXL']
   },
   {
     id: 4,
-    name: "Embellished Georgette Anarkali Suit",
-    description: "Stunning floor-length Anarkali suit set in deep emerald green, adorned with intricate Zardozi hand-embroidery. Accompanied by a heavy net dupatta and comfortable pants.",
-    category: "Suit",
-    imageUrl: "/assets/suit_designer.png",
-    priceRange: "₹4,800 - ₹12,500",
-    fabric: "Faux Georgette & Shantoon",
-    occasion: "Festive / Evening Wear",
-    sizes: ["S", "M", "L", "XL", "XXL"]
+    name: 'Chikankari Kurta Set',
+    description: 'A light, elegant kurta set with fine embroidery and clean finishing for work, gatherings, and easy celebration looks.',
+    category: 'Kurtas',
+    imageUrl: '/assets/readymade_kurta.png',
+    priceRange: 'Rs. 1,499 - Rs. 4,499',
+    fabric: 'Georgette with lining',
+    occasion: 'Semi-formal and casual',
+    sizes: ['S', 'M', 'L', 'XL']
   },
   {
-    id: 7,
-    name: "Premium Giza Cotton Shirting",
-    description: "Ultra-premium Giza cotton fabric from the finest mills. Offers unmatched breathability, a silky smooth texture, and long-lasting lustre for custom executive shirts.",
-    category: "Shirting",
-    imageUrl: "/assets/shirting_fabric.png",
-    priceRange: "₹800 - ₹2,500 per meter",
-    fabric: "100% Giza Cotton",
-    occasion: "Formal / Custom Tailoring",
-    sizes: ["Cut Length (1.6m)", "Cut Length (2.0m)", "Custom Length"]
+    id: 5,
+    name: 'Printed Shirt Fabric',
+    description: 'Crisp shirt fabric with contemporary print placement, made for custom shirts, short kurtas, and summer separates.',
+    category: 'Mens',
+    imageUrl: '/assets/cat_shirt.png',
+    priceRange: 'Rs. 599 - Rs. 1,899 / cut',
+    fabric: 'Giza Cotton Blend',
+    occasion: 'Office and smart casual',
+    sizes: ['1.6 meter cut', '2 meter cut', 'Custom cut']
   },
   {
-    id: 9,
-    name: "Georgette Chikankari Kurta Set",
-    description: "Handcrafted Lucknowi Chikankari long kurta in pastel blue, featuring exquisite shadow work and border details, paired with white cotton trousers.",
-    category: "Ready-made",
-    imageUrl: "/assets/readymade_kurta.png",
-    priceRange: "₹1,800 - ₹4,500",
-    fabric: "Georgette with Cotton Lining",
-    occasion: "Festive / Semi-Formal",
-    sizes: ["S", "M", "L", "XL", "XXL"]
+    id: 6,
+    name: 'Festive Dupatta Combo',
+    description: 'A coordinated fabric and dupatta pairing for quick custom outfits with balanced color, motif, and border combinations.',
+    category: 'Combos',
+    imageUrl: '/assets/cat_combo.png',
+    priceRange: 'Rs. 1,299 - Rs. 3,999',
+    fabric: 'Cotton silk blend',
+    occasion: 'Festive gifting',
+    sizes: ['Unstitched set']
   }
-];
+]
 
 function App() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [backendOffline, setBackendOffline] = useState(false);
-  const [filterCategory, setFilterCategory] = useState('All');
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [filterCategory, setFilterCategory] = useState('All')
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
-  // Backend API URL - reads from .env.local (dev) or .env.production (Vercel)
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5121/api';
+  const filteredProducts = useMemo(() => {
+    if (filterCategory === 'All') return PRODUCTS
+    return PRODUCTS.filter((product) => product.category === filterCategory)
+  }, [filterCategory])
 
-  useEffect(() => {
-    // Fetch products from ASP.NET Core backend
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/products`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch from backend');
-        }
-        const data = await response.json();
-        setProducts(data);
-        setBackendOffline(false);
-      } catch (error) {
-        console.warn('Backend server offline. Loading local showcase data...', error);
-        setProducts(FALLBACK_PRODUCTS);
-        setBackendOffline(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Theme Management
-  useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
-  }, [isDarkMode]);
-
-  const toggleTheme = () => {
-    setIsDarkMode(prev => !prev);
-  };
-
-  // Scroll Reveal Animation Hook
-  useEffect(() => {
-    const reveals = document.querySelectorAll('.reveal');
-    const revealOnScroll = () => {
-      for (let i = 0; i < reveals.length; i++) {
-        const windowHeight = window.innerHeight;
-        const elementTop = reveals[i].getBoundingClientRect().top;
-        const elementVisible = 150;
-        if (elementTop < windowHeight - elementVisible) {
-          reveals[i].classList.add('active');
-        }
-      }
-    };
-
-    window.addEventListener('scroll', revealOnScroll);
-    // Trigger once on load to show initial elements
-    setTimeout(revealOnScroll, 200);
-
-    return () => window.removeEventListener('scroll', revealOnScroll);
-  }, [products]);
+  const handleSelectCategory = (category) => {
+    setFilterCategory(category)
+    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   return (
-    <div className="royal-bg min-h-screen">
-      {backendOffline && (
-        <div style={{
-          backgroundColor: 'var(--secondary)',
-          color: 'var(--text-dark)',
-          textAlign: 'center',
-          padding: '8px 16px',
-          fontSize: '0.85rem',
-          fontWeight: 600,
-          letterSpacing: '0.05em',
-          position: 'sticky',
-          top: 0,
-          zIndex: 1000,
-          boxShadow: 'var(--shadow-sm)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <span>✨ DEMO MODE — Connecting to local showcase data (Backend offline at port 5000)</span>
-        </div>
-      )}
-
-      <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      
+    <div className="site-shell">
+      <Header />
       <main>
         <Hero />
-        
-        <Categories onSelectCategory={(cat) => {
-          setFilterCategory(cat);
-          const catalogSection = document.getElementById('catalog');
-          if (catalogSection) {
-            catalogSection.scrollIntoView({ behavior: 'smooth' });
-          }
-        }} />
-        
-        <Catalog 
-          products={products} 
-          loading={loading}
-          filterCategory={filterCategory} 
-          setFilterCategory={setFilterCategory} 
-          onProductClick={(product) => setSelectedProduct(product)} 
+        <Categories onSelectCategory={handleSelectCategory} />
+        <Catalog
+          products={filteredProducts}
+          activeCategory={filterCategory}
+          onCategoryChange={setFilterCategory}
+          onProductClick={setSelectedProduct}
         />
-        
-        <BookingForm apiUrl={API_BASE_URL} />
-        
+        <BookingForm />
         <About />
       </main>
-
       <Footer />
-
       {selectedProduct && (
-        <ProductModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
-        />
+        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
       <Analytics />
     </div>

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: gaurav-vastralaya-api
+    name: gaurav-vastralyal-api
     runtime: dotnet
     buildCommand: cd backend && dotnet publish -c Release -o out
     startCommand: cd backend/out && ./backend
