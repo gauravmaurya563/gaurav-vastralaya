@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: gaurav-vastralaya-api
+    runtime: dotnet
+    buildCommand: cd backend && dotnet publish -c Release -o out
+    startCommand: cd backend/out && ./backend
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false  # Set this manually in Render dashboard with your Azure SQL or Railway DB URL

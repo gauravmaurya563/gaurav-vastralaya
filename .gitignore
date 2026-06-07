@@ -1,0 +1,17 @@
+# .gitignore for Gaurav Vastralaya
+
+# .NET Backend
+backend/bin/
+backend/obj/
+backend/*.user
+backend/.vs/
+backend/data/
+
+# React Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# General
+.DS_Store
+Thumbs.db
