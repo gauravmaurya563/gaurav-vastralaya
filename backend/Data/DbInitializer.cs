@@ -35,7 +35,11 @@ namespace backend.Data
                 {
                     string category = categories[random.Next(categories.Length)];
                     string adjective = adjectives[random.Next(adjectives.Length)];
-                    string imageUrl = imageMap[category];
+                    
+                    // Use a unique placeholder image from loremflickr using the category as a keyword
+                    // The 'lock' parameter ensures the URL is unique and stable per product ID
+                    string searchTerm = category.ToLower().Replace("combo", "fabric").Replace("t-shirt", "tshirt");
+                    string imageUrl = $"https://loremflickr.com/400/600/fashion,{searchTerm}?lock={i}";
                     
                     int priceBase = random.Next(10, 150) * 100;
                     
