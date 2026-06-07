@@ -7,6 +7,7 @@ import BookingForm from './components/BookingForm'
 import About from './components/About'
 import Footer from './components/Footer'
 import ProductModal from './components/ProductModal'
+import { Analytics } from '@vercel/analytics/react'
 
 // Fallback catalog data in case the backend is not running
 const FALLBACK_PRODUCTS = [
@@ -183,6 +184,7 @@ function App() {
           onClose={() => setSelectedProduct(null)} 
         />
       )}
+      <Analytics />
     </div>
   )
 }
