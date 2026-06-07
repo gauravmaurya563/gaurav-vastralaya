@@ -9,16 +9,13 @@ namespace backend.Data
     {
         public static void Seed(AppDbContext context)
         {
-            // Seed 50 products for e-commerce showcase
-            if (context.Products.Count() < 20)
-            {
-                // Optionally clear old ones to prevent duplicates if count was < 20 but > 0
-                if (context.Products.Any()) {
-                    context.Products.RemoveRange(context.Products);
-                    context.SaveChanges();
-                }
+            // Always clear the old database to ensure we get exactly our 50 new items
+            if (context.Products.Any()) {
+                context.Products.RemoveRange(context.Products);
+                context.SaveChanges();
+            }
 
-                var products = new List<Product>();
+            var products = new List<Product>();
                 var random = new Random();
                 
                 string[] categories = { "Saree", "T-Shirt", "Shirt", "Suit", "Jeans", "Combo" };
@@ -57,7 +54,6 @@ namespace backend.Data
 
                 context.Products.AddRange(products);
                 context.SaveChanges();
-            }
         }
     }
 }
