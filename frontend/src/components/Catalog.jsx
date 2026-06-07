@@ -20,37 +20,33 @@ function Catalog({ products, loading, filterCategory, setFilterCategory, onProdu
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
           <div>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4" style={{ color: 'var(--primary)' }}>
-              Curated Lookbook
+            <h2 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-dark)' }}>
+              Top Deals on Traditional Wear
             </h2>
-            <p className="font-sans text-sm md:text-base font-light max-w-lg" style={{ color: 'var(--text-muted)' }}>
-              Browse through our premium selection of designs. Click on any item to view fabric details, available sizes, or to make a direct WhatsApp inquiry.
-            </p>
           </div>
           
           {/* Active Filter Title */}
-          <div className="flex items-center gap-2 font-sans text-xs tracking-widest font-semibold uppercase text-[var(--secondary-dark)] border-b pb-1" style={{ borderColor: 'var(--secondary)' }}>
-            <Filter size={14} />
-            <span>FILTER: {CATEGORY_MAP[filterCategory]}</span>
+          <div className="flex items-center gap-2 font-sans text-sm font-medium text-gray-500">
+            <Filter size={16} />
+            <span>{CATEGORY_MAP[filterCategory]}</span>
           </div>
         </div>
 
         {/* Filter Navigation Buttons */}
-        <div className="flex flex-wrap gap-2.5 mb-10">
+        <div className="flex flex-wrap gap-2 mb-8 bg-white p-2 rounded-sm shadow-sm border border-gray-200">
           {Object.keys(CATEGORY_MAP).map((cat) => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
-              className="px-6 py-2.5 rounded-full font-sans text-xs tracking-wider font-semibold uppercase transition-all duration-300 cursor-pointer"
+              className="px-4 py-2 rounded-sm font-sans text-sm font-medium transition-colors cursor-pointer"
               style={{
                 backgroundColor: filterCategory === cat ? 'var(--primary)' : 'transparent',
-                color: filterCategory === cat ? 'white' : 'var(--text-dark)',
-                border: `1.5px solid ${filterCategory === cat ? 'var(--primary)' : 'rgba(var(--secondary-rgb), 0.3)'}`
+                color: filterCategory === cat ? 'white' : 'var(--text-dark)'
               }}
             >
-              {cat === 'All' ? 'ALL COLLECTIONS' : cat.toUpperCase()}
+              {cat === 'All' ? 'All' : cat}
             </button>
           ))}
         </div>
@@ -75,59 +71,55 @@ function Catalog({ products, loading, filterCategory, setFilterCategory, onProdu
           </div>
         ) : (
           /* Products Grid */
-          <div className="grid-responsive">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredProducts.map((product) => (
               <div 
                 key={product.id}
                 onClick={() => onProductClick(product)}
-                className="glass group rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-lg transition-all duration-500 hover:-translate-y-1.5 flex flex-col"
-                style={{
-                  border: '1px solid rgba(var(--secondary-rgb), 0.12)',
-                  backgroundColor: 'var(--bg-card)'
-                }}
+                className="bg-white rounded-sm overflow-hidden cursor-pointer flex flex-col group border border-gray-200 hover:shadow-lg transition-shadow"
               >
                 {/* Product Image */}
-                <div className="relative h-72 w-full overflow-hidden bg-[rgba(var(--primary-rgb),0.02)] flex items-center justify-center">
+                <div className="relative h-60 w-full overflow-hidden flex items-center justify-center p-4">
                   <img 
                     src={product.imageUrl} 
                     alt={product.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="max-w-full max-h-full object-contain transition-transform group-hover:scale-105"
                     onError={(e) => {
                       e.target.style.display = 'none';
-                      e.target.parentNode.style.backgroundColor = 'rgba(var(--primary-rgb), 0.05)';
+                      e.target.parentNode.style.backgroundColor = '#f1f3f6';
                     }}
                   />
                   {/* Category overlay */}
-                  <div className="absolute top-4 left-4 px-3 py-1 rounded-full font-sans text-[10px] tracking-widest font-semibold uppercase bg-white/95 text-[var(--primary)] shadow-sm">
+                  <div className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-bold uppercase bg-gray-100 text-gray-500 rounded-sm">
                     {product.category}
                   </div>
                 </div>
 
                 {/* Info body */}
-                <div className="p-5 flex flex-col flex-grow">
-                  <span className="font-sans text-[10px] tracking-widest font-semibold uppercase text-[var(--text-muted)] mb-1">
-                    {product.fabric}
-                  </span>
-                  
-                  <h3 className="font-serif text-lg font-bold mb-2 group-hover:text-[var(--primary)] transition-colors duration-300">
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="font-sans text-sm font-medium text-gray-800 line-clamp-2 group-hover:text-[#2874f0] transition-colors mb-1">
                     {product.name}
                   </h3>
                   
-                  <p className="font-sans text-xs font-light text-[var(--text-muted)] mb-4 line-clamp-2">
-                    {product.description}
+                  <p className="font-sans text-xs text-gray-500 mb-2 truncate">
+                    {product.fabric}
                   </p>
 
-                  <div className="mt-auto pt-4 border-t flex items-center justify-between" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
-                    <div>
-                      <span className="block font-sans text-[9px] tracking-wider text-[var(--text-muted)] uppercase">PRICE RANGE</span>
-                      <span className="font-serif text-sm font-semibold text-[var(--primary)]">{product.priceRange}</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 font-sans text-[10px] tracking-widest font-semibold uppercase text-[var(--secondary-dark)] group-hover:text-[var(--primary)] transition-colors">
-                      <span>DETAILS</span>
-                      <ArrowRight size={12} className="transition-transform duration-300 group-hover:translate-x-1" />
-                    </div>
+                  <div className="mt-auto flex items-baseline gap-2 mb-3">
+                    <span className="font-sans text-base font-bold text-gray-900">{product.priceRange.split(' ')[0]}</span>
+                    {product.priceRange.split(' ').length > 1 && (
+                      <span className="font-sans text-xs text-gray-500 line-through">
+                        {product.priceRange.split(' ').pop()}
+                      </span>
+                    )}
+                    <span className="font-sans text-xs font-bold text-green-600 ml-1">
+                      Sale
+                    </span>
                   </div>
+
+                  <button className="w-full bg-[#fb641b] text-white py-2 font-bold text-sm rounded-sm shadow-sm hover:bg-[#e05411] transition-colors">
+                    BOOK NOW
+                  </button>
                 </div>
               </div>
             ))}
