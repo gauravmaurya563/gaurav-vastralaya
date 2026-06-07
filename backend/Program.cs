@@ -11,9 +11,9 @@ builder.Services.AddControllers();
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Register SQL Server DbContext
+// Register PostgreSQL DbContext (Neon.tech on production, local pg for dev)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
 
 // Register services as Scoped (since they depend on DbContext)
 builder.Services.AddScoped<IProductService, ProductService>();
