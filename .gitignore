@@ -5,7 +5,6 @@ backend/bin/
 backend/obj/
 backend/*.user
 backend/.vs/
-backend/data/
 
 # React Frontend
 frontend/node_modules/
