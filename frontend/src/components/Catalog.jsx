@@ -3,10 +3,12 @@ import { Filter, ArrowRight } from 'lucide-react'
 
 const CATEGORY_MAP = {
   'All': 'All Products',
-  'Saree': 'Fancy Sarees',
-  'Suit': 'Designer Suits',
-  'Shirting': 'Shirting & Suiting',
-  'Ready-made': 'Ready-made'
+  'Saree': 'Sarees',
+  'T-Shirt': 'T-Shirts',
+  'Shirt': 'Shirts',
+  'Suit': 'Suits',
+  'Jeans': 'Jeans',
+  'Combo': 'Unstitched Combos'
 };
 
 function Catalog({ products, loading, filterCategory, setFilterCategory, onProductClick }) {

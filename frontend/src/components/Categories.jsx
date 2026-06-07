@@ -3,23 +3,33 @@ import React from 'react'
 const CATEGORY_ITEMS = [
   {
     name: "Saree",
-    title: "Fancy Sarees",
-    imageUrl: "/assets/saree_premium.png"
+    title: "Sarees",
+    imageUrl: "/assets/cat_saree.png"
+  },
+  {
+    name: "T-Shirt",
+    title: "T-Shirts",
+    imageUrl: "/assets/cat_tshirt.png"
+  },
+  {
+    name: "Shirt",
+    title: "Shirts",
+    imageUrl: "/assets/cat_shirt.png"
   },
   {
     name: "Suit",
-    title: "Designer Suits",
-    imageUrl: "/assets/suit_designer.png"
+    title: "Suits",
+    imageUrl: "/assets/cat_suit.png"
   },
   {
-    name: "Shirting",
-    title: "Shirting & Suiting",
-    imageUrl: "/assets/shirting_fabric.png"
+    name: "Jeans",
+    title: "Jeans",
+    imageUrl: "/assets/cat_jeans.png"
   },
   {
-    name: "Ready-made",
-    title: "Ready-made Wear",
-    imageUrl: "/assets/readymade_kurta.png"
+    name: "Combo",
+    title: "Unstitched Combos",
+    imageUrl: "/assets/cat_combo.png"
   }
 ];
 
