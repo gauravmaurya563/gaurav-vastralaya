@@ -2,32 +2,37 @@ import React from 'react'
 
 function Hero() {
   return (
-    <section className="bg-white pt-4 pb-4 px-4 w-full">
-      <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center justify-between rounded-sm overflow-hidden" style={{ backgroundColor: '#2874f0', minHeight: '300px' }}>
-        
-        {/* Left Content */}
-        <div className="p-8 md:p-12 flex-1 text-white z-10">
-          <span className="bg-white text-[#2874f0] text-xs font-bold px-2 py-1 rounded-sm mb-4 inline-block">
-            NEW COLLECTION
+    <section className="relative w-full h-[85vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-[var(--bg-cream)]">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/assets/hero_bg.png" 
+          alt="Premium Fabric Background" 
+          className="w-full h-full object-cover opacity-85"
+        />
+        {/* Subtle elegant gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(251,250,248,0.95)] via-[rgba(251,250,248,0.7)] to-transparent"></div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row items-center justify-start h-full">
+        <div className="max-w-xl text-left animate-fade-in">
+          <span className="font-sans text-[11px] tracking-[0.25em] font-semibold uppercase text-[var(--secondary-dark)] mb-6 block">
+            The Heritage Collection
           </span>
-          <h1 className="text-3xl sm:text-5xl font-bold mb-4">
-            Bespoke Indian Couture
+          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-[var(--text-dark)] leading-tight">
+            Elegance Woven<br/>in Tradition
           </h1>
-          <p className="text-white/90 text-sm sm:text-base mb-8 max-w-lg">
-            Discover our handpicked collections of Fancy Sarees, Designer Suits, and Bespoke Shirting. Free styling session available.
+          <p className="font-sans text-base md:text-lg text-[var(--text-muted)] mb-10 max-w-md font-light leading-relaxed">
+            Discover our handpicked collections of pure silk sarees, designer suits, and bespoke fabrics. Crafted for the modern connoisseur.
           </p>
-          <div className="flex gap-4">
-            <a href="#catalog" className="bg-white text-[#2874f0] px-6 py-3 font-bold text-sm rounded-sm hover:shadow-lg transition-shadow">
+          <div className="flex items-center gap-6">
+            <a href="#catalog" className="btn-primary" style={{ backgroundColor: 'var(--primary)' }}>
+              Explore Collection
+            </a>
+            <a href="#catalog" className="font-sans text-sm tracking-widest uppercase font-semibold text-[var(--text-dark)] hover:text-[var(--primary)] transition-colors border-b border-transparent hover:border-[var(--primary)] pb-1">
               Shop Now
             </a>
           </div>
-        </div>
-
-        {/* Right Image/Graphic area */}
-        <div className="flex-1 w-full h-full min-h-[250px] md:min-h-[300px] bg-cover bg-center" style={{ 
-          backgroundImage: 'url(/assets/hero_bg.png)',
-          clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0% 100%)'
-        }}>
         </div>
       </div>
     </section>

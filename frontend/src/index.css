@@ -1,43 +1,45 @@
-/* Global Style System - Gaurav Vastralaya */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+/* Global Style System - Gaurav Vastralaya (Taneira Aesthetic) */
 
 :root {
-  /* E-commerce Color Palette (Flipkart Style) */
-  --primary: #2874f0;       /* Flipkart Blue */
-  --primary-light: #4489fa;
-  --primary-rgb: 40, 116, 240;
+  /* Taneira Color Palette */
+  --primary: #7a1d2e;       /* Deep Maroon */
+  --primary-light: #9c2a40;
+  --primary-rgb: 122, 29, 46;
   
-  --secondary: #fb641b;       /* Flipkart Orange */
-  --secondary-light: #fc7b3a;
-  --secondary-dark: #e05411;
-  --secondary-rgb: 251, 100, 27;
+  --secondary: #d4af37;       /* Soft Gold */
+  --secondary-light: #e6c863;
+  --secondary-dark: #b89320;
+  --secondary-rgb: 212, 175, 55;
   
-  --bg-cream: #f1f3f6;        /* Light Gray Background */
+  --bg-cream: #fbfaf8;        /* Off-White / Cream */
   --bg-card: #ffffff;         /* Pure White Cards */
-  --text-dark: #212121;       /* Standard Dark Text */
-  --text-muted: #878787;      /* Standard Gray Text */
+  --text-dark: #2c2c2c;       /* Charcoal */
+  --text-muted: #6b6b6b;      /* Elegant Gray */
   
-  --font-serif: 'Inter', -apple-system, sans-serif;
-  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Lato', -apple-system, sans-serif;
   
-  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.1);
-  --shadow-md: 0 2px 4px 0 rgba(0,0,0,0.08);
-  --shadow-lg: 0 4px 16px 0 rgba(0,0,0,0.1);
-  --shadow-gold: 0 4px 16px 0 rgba(0,0,0,0.1);
+  --shadow-sm: 0 4px 20px rgba(0,0,0,0.03);
+  --shadow-md: 0 8px 30px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.1);
+  --shadow-gold: 0 8px 30px rgba(212, 175, 55, 0.15);
   
-  --transition-smooth: all 0.2s ease-in-out;
-  --transition-bounce: all 0.2s ease-in-out;
+  --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition-bounce: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* Dark Theme overrides (Activated via .dark-theme class on body) */
 body.dark-theme {
-  --bg-cream: #121212;
-  --bg-card: #1e1e1e;
-  --text-dark: #f0f0f0;
-  --text-muted: #aaaaaa;
-  --shadow-sm: 0 1px 2px 0 rgba(255,255,255,0.05);
-  --shadow-md: 0 2px 4px 0 rgba(255,255,255,0.05);
-  --shadow-lg: 0 4px 16px 0 rgba(0,0,0,0.5);
-  --shadow-gold: 0 4px 16px 0 rgba(0,0,0,0.5);
+  --bg-cream: #1a1515;
+  --bg-card: #231d1d;
+  --text-dark: #f0eaea;
+  --text-muted: #b8b0b0;
+  --shadow-sm: 0 4px 20px rgba(0,0,0,0.2);
+  --shadow-md: 0 8px 30px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.6);
+  --shadow-gold: 0 8px 30px rgba(212, 175, 55, 0.1);
 }
 
 /* Reset & Base Styles */
