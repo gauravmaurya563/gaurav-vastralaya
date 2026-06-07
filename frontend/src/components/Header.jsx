@@ -18,10 +18,10 @@ function Header() {
         {/* Logo */}
         <a href="#" className="flex flex-col items-start w-48">
           <span className="font-serif text-3xl font-bold tracking-wider text-[var(--primary)] uppercase leading-none mb-1">
-            Taneira
+            GAURAV
           </span>
           <span className="font-sans text-[9px] tracking-[0.2em] font-bold text-gray-800 uppercase">
-            A TATA PRODUCT
+            VASTRALAYA
           </span>
         </a>
 
