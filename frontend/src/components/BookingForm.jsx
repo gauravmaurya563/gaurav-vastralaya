@@ -115,49 +115,51 @@ function BookingForm({ apiUrl }) {
         <div className="w-full md:w-3/5 p-8 md:p-12">
           {successData ? (
             /* Success confirmation card */
-            <div className="flex flex-col items-center justify-center text-center h-full py-6">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 text-white" style={{
+            <div className="flex flex-col items-center justify-center text-center h-full py-10 w-full">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 text-white shadow-lg animate-fade-in" style={{
                 backgroundColor: 'var(--secondary)'
               }}>
-                <Check size={32} />
+                <Check size={40} />
               </div>
-              <h3 className="font-serif text-2xl font-bold mb-2" style={{ color: 'var(--primary)' }}>
+              <h3 className="font-serif text-3xl font-bold mb-4 animate-fade-in" style={{ color: 'var(--primary)', animationDelay: '0.1s' }}>
                 Session Booked Successfully!
               </h3>
-              <p className="font-sans text-sm font-light text-[var(--text-muted)] mb-6 max-w-sm">
-                Thank you, <strong>{successData.name}</strong>. Your appointment has been scheduled for:
+              <p className="font-sans text-base font-light text-[var(--text-muted)] mb-8 max-w-sm animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                Thank you, <strong className="font-semibold text-[var(--text-dark)]">{successData.name}</strong>. Your appointment has been confirmed.
               </p>
               
               {/* Ticket Details */}
-              <div className="w-full max-w-sm rounded-xl p-5 mb-8 text-left border" style={{
+              <div className="w-full max-w-md rounded-2xl p-6 mb-8 text-left animate-fade-in" style={{
                 backgroundColor: 'rgba(var(--secondary-rgb), 0.05)',
-                borderColor: 'rgba(var(--secondary-rgb), 0.15)'
+                border: '1px solid rgba(var(--secondary-rgb), 0.2)',
+                animationDelay: '0.3s'
               }}>
-                <div className="grid grid-cols-2 gap-4 text-xs font-sans">
+                <div className="grid grid-cols-2 gap-6 text-sm font-sans">
                   <div>
-                    <span className="block text-[10px] text-[var(--text-muted)] uppercase">APPOINTMENT ID</span>
-                    <span className="font-mono font-semibold text-xs truncate block">{successData.id}</span>
+                    <span className="block text-[10px] tracking-widest text-[var(--text-muted)] uppercase mb-1">Appointment ID</span>
+                    <span className="font-mono font-medium text-xs truncate block text-[var(--primary)]">{successData.id}</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] text-[var(--text-muted)] uppercase">CATEGORY</span>
-                    <span className="font-semibold">{successData.category.split(' ')[0]}</span>
+                    <span className="block text-[10px] tracking-widest text-[var(--text-muted)] uppercase mb-1">Category</span>
+                    <span className="font-semibold text-[var(--text-dark)]">{successData.category.split(' ')[0]}</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] text-[var(--text-muted)] uppercase">DATE</span>
-                    <span className="font-semibold">{successData.date}</span>
+                    <span className="block text-[10px] tracking-widest text-[var(--text-muted)] uppercase mb-1">Date</span>
+                    <span className="font-semibold text-[var(--text-dark)]">{successData.date}</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] text-[var(--text-muted)] uppercase">TIME SLOT</span>
-                    <span className="font-semibold">{successData.timeSlot}</span>
+                    <span className="block text-[10px] tracking-widest text-[var(--text-muted)] uppercase mb-1">Time Slot</span>
+                    <span className="font-semibold text-[var(--text-dark)]">{successData.timeSlot}</span>
                   </div>
                 </div>
               </div>
               
               <button 
                 onClick={() => setSuccessData(null)}
-                className="btn-secondary"
+                className="btn-secondary animate-fade-in"
+                style={{ animationDelay: '0.4s' }}
               >
-                Book Another Appointment
+                Book Another Session
               </button>
             </div>
           ) : (
