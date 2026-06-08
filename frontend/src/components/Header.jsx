@@ -21,7 +21,7 @@ function Header() {
 
         <a className="brand" href="#">
           <span>Gaurav</span>
-          <strong>Vastraalay</strong>
+          <strong>Vastralay</strong>
         </a>
 
         <label className="search-box" aria-label="Search products">

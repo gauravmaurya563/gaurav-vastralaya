@@ -19,7 +19,7 @@ function About() {
         <p className="eyebrow">Why shop with us</p>
         <h2>Made for people who love fabric before fashion.</h2>
         <p>
-          Gaurav Vastraalay brings together curated prints, Indian occasion wear, and custom
+          Gaurav Vastralay brings together curated prints, Indian occasion wear, and custom
           fabric support in one clean shopping experience. Browse like an online fabric store,
           then ask for the exact cut, size, or styling help you need.
         </p>
