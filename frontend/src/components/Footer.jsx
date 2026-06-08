@@ -19,7 +19,7 @@ function Footer() {
         <div>
           <a className="brand footer-brand" href="#">
             <span>Gaurav</span>
-            <strong>Vastralyal</strong>
+            <strong>Vastraalay</strong>
           </a>
           <p>Premium fabrics, ethnic wear, and custom print support for modern Indian wardrobes.</p>
         </div>
@@ -41,12 +41,12 @@ function Footer() {
           <h3>Contact</h3>
           <span><MapPin size={15} /> Textile Market Road, New Delhi</span>
           <span><Phone size={15} /> +91 99999 99999</span>
-          <span><Mail size={15} /> hello@gauravvastralyal.com</span>
+          <span><Mail size={15} /> hello@gauravVastraalay.com</span>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <span>Copyright {new Date().getFullYear()} Gaurav Vastralyal.</span>
+        <span>Copyright {new Date().getFullYear()} Gaurav Vastraalay.</span>
         <span>Built for premium fabric shopping.</span>
       </div>
     </footer>

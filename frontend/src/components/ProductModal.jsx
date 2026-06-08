@@ -5,7 +5,7 @@ function ProductModal({ product, onClose }) {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
 
   const openWhatsApp = () => {
-    const message = `Hi Gaurav Vastralyal, I am interested in ${product.name}. Size/length: ${selectedSize}.`
+    const message = `Hi Gaurav Vastraalay, I am interested in ${product.name}. Size/length: ${selectedSize}.`
     window.open(`https://wa.me/919999999999?text=${encodeURIComponent(message)}`, '_blank')
   }
 
