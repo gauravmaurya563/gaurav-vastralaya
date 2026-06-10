@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Heart, Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import Logo from './Logo'
 
 const MENU = ['Fabrics', 'Sarees', 'Suits', 'Kurtas', 'Mens', 'Combos', 'New Arrivals', 'Sale']
 
@@ -19,10 +20,7 @@ function Header() {
           <Menu size={22} />
         </button>
 
-        <a className="brand" href="#">
-          <span>Gaurav</span>
-          <strong>Vastralay</strong>
-        </a>
+        <Logo size="small" layout="horizontal" variant="header" />
 
         <label className="search-box" aria-label="Search products">
           <input placeholder="Search sarees, fabrics, kurtas..." />

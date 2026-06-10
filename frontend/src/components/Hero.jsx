@@ -7,7 +7,7 @@ function Hero() {
       <img className="hero-bg" src="/assets/hero_bg.png" alt="Premium Indian fabrics and ethnic wear" />
       <div className="hero-content">
         <p className="eyebrow">Custom prints. Festive weaves. Everyday style.</p>
-        <h1>Gaurav Vastralay</h1>
+        <h1 className="visually-hidden">Gaurav Vastralay</h1>
         <p>
           Shop fabric by the meter, sarees, suits, kurtas, and ready-to-stitch combinations
           curated for Indian celebrations and modern tailoring.

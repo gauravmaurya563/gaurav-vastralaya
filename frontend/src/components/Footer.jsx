@@ -1,5 +1,6 @@
 import React from 'react'
 import { Mail, MapPin, Phone } from 'lucide-react'
+import Logo from './Logo'
 
 function Footer() {
   return (
@@ -17,10 +18,7 @@ function Footer() {
 
       <div className="footer-grid">
         <div>
-          <a className="brand footer-brand" href="#">
-            <span>Gaurav</span>
-            <strong>Vastralay</strong>
-          </a>
+          <Logo size="medium" layout="stacked" variant="footer" />
           <p>Premium fabrics, ethnic wear, and custom print support for modern Indian wardrobes.</p>
         </div>
         <div>

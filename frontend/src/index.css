@@ -108,6 +108,109 @@ img {
   letter-spacing: 0.32em;
 }
 
+/* Logo Styling */
+.logo-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  width: fit-content;
+  transition: opacity 0.2s ease;
+}
+
+.logo-brand:hover {
+  opacity: 0.95;
+}
+
+.logo-brand .logo-svg,
+.logo-brand .logo-img {
+  transition: transform 12s linear, filter 0.4s ease;
+  display: block;
+  border-radius: 50%;
+}
+
+.logo-brand:hover .logo-svg,
+.logo-brand:hover .logo-img {
+  filter: drop-shadow(0 0 5px rgba(201, 154, 50, 0.5));
+  transform: rotate(360deg);
+}
+
+.logo-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+/* Horizontal layout (Header) */
+.logo-horizontal {
+  flex-direction: row;
+  align-items: center;
+}
+
+.logo-horizontal .logo-text-top {
+  font-family: 'Playfair Display', serif;
+  color: var(--brand);
+  font-size: 26px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.logo-horizontal .logo-text-bottom {
+  margin-top: 2px;
+  color: var(--ink);
+  font-size: 9.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+/* Stacked layout (Footer) */
+.logo-stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.logo-stacked .logo-text-top {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold);
+  font-size: 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.logo-stacked .logo-text-bottom {
+  margin-top: 4px;
+  color: #fff;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+/* Header-specific adaptations */
+.logo-header {
+  height: 56px;
+}
+
+/* Footer-specific adaptations */
+.logo-footer {
+  margin-bottom: 15px;
+}
+
+/* Make text hide on small mobile screens to keep header layout clean */
+@media (max-width: 480px) {
+  .logo-header .logo-text-wrapper {
+    display: none;
+  }
+}
+
+
 .search-box {
   min-height: 44px;
   display: flex;
@@ -1034,3 +1137,16 @@ img {
     font-size: 32px;
   }
 }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
