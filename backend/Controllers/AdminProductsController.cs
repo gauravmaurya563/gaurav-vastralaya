@@ -98,7 +98,14 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred during product creation.", error = ex.Message, stack = ex.StackTrace });
+                var fullErrorMessage = ex.Message;
+                var inner = ex.InnerException;
+                while (inner != null)
+                {
+                    fullErrorMessage += " --> " + inner.Message;
+                    inner = inner.InnerException;
+                }
+                return StatusCode(500, new { message = "An error occurred during product creation.", error = fullErrorMessage, stack = ex.StackTrace });
             }
         }
     }
