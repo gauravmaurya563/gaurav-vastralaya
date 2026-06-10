@@ -12,7 +12,8 @@ export default function AdminLogin({ onLoginSuccess }) {
     setLoading(true)
 
     try {
-      const response = await fetch('http://localhost:5121/api/Admin/login', {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5121/api'
+      const response = await fetch(`${API_BASE}/Admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

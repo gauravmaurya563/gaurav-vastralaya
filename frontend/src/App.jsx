@@ -101,7 +101,8 @@ function App() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5121/api/Products')
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5121/api'
+      const response = await fetch(`${API_BASE}/Products`)
       if (!response.ok) {
         throw new Error('Backend request failed')
       }

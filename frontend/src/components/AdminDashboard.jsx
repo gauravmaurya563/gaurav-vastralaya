@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5121/api'
+
 export default function AdminDashboard({ username, onLogout }) {
   // Product form state
   const [name, setName] = useState('')
@@ -33,7 +35,7 @@ export default function AdminDashboard({ username, onLogout }) {
 
   const fetchAdminCount = async () => {
     try {
-      const response = await fetch('http://localhost:5121/api/Admin/accounts-count')
+      const response = await fetch(`${API_BASE}/Admin/accounts-count`)
       if (response.ok) {
         const data = await response.json()
         setAdminCount(data.count)
@@ -86,7 +88,7 @@ export default function AdminDashboard({ username, onLogout }) {
         formData.append('Files', file)
       })
 
-      const response = await fetch('http://localhost:5121/api/AdminProducts', {
+      const response = await fetch(`${API_BASE}/AdminProducts`, {
         method: 'POST',
         body: formData,
       })
@@ -118,7 +120,7 @@ export default function AdminDashboard({ username, onLogout }) {
     setRegisterError('')
 
     try {
-      const response = await fetch('http://localhost:5121/api/Admin/register', {
+      const response = await fetch(`${API_BASE}/Admin/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
