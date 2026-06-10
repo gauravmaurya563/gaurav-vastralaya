@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using backend.Models;
 using backend.Services;
 
@@ -8,8 +9,146 @@ namespace backend.Data
 {
     public static class DbInitializer
     {
+        public static void EnsureSchemaUpToDate(AppDbContext context)
+        {
+            context.Database.OpenConnection();
+            var conn = context.Database.GetDbConnection();
+            
+            // 1. Check if AdminUsers table exists
+            bool adminUsersTableExists = false;
+            using (var cmd = conn.CreateCommand())
+            {
+                if (context.Database.IsSqlite())
+                {
+                    cmd.CommandText = "SELECT 1 FROM sqlite_master WHERE type='table' AND name='AdminUsers';";
+                }
+                else
+                {
+                    cmd.CommandText = "SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND LOWER(table_name) = 'adminusers';";
+                }
+                using (var reader = cmd.ExecuteReader())
+                {
+                    adminUsersTableExists = reader.Read();
+                }
+            }
+
+            if (!adminUsersTableExists)
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    if (context.Database.IsSqlite())
+                    {
+                        cmd.CommandText = @"
+                            CREATE TABLE ""AdminUsers"" (
+                                ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                                ""Username"" TEXT NOT NULL,
+                                ""PasswordHash"" TEXT NOT NULL,
+                                ""CreatedAt"" TEXT NOT NULL
+                            );";
+                    }
+                    else
+                    {
+                        cmd.CommandText = @"
+                            CREATE TABLE ""AdminUsers"" (
+                                ""Id"" SERIAL PRIMARY KEY,
+                                ""Username"" VARCHAR(50) NOT NULL,
+                                ""PasswordHash"" VARCHAR(255) NOT NULL,
+                                ""CreatedAt"" TIMESTAMP WITH TIME ZONE NOT NULL
+                            );";
+                    }
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            // 2. Check if Images column exists in Products table
+            bool imagesColumnExists = false;
+            using (var cmd = conn.CreateCommand())
+            {
+                if (context.Database.IsSqlite())
+                {
+                    cmd.CommandText = "PRAGMA table_info(Products);";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader.GetString(1).Equals("Images", StringComparison.OrdinalIgnoreCase))
+                            {
+                                imagesColumnExists = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    cmd.CommandText = "SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND LOWER(table_name) = 'products' AND LOWER(column_name) = 'images';";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        imagesColumnExists = reader.Read();
+                    }
+                }
+            }
+
+            if (!imagesColumnExists)
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"ALTER TABLE ""Products"" ADD COLUMN ""Images"" TEXT NULL;";
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            // 3. Check if CreatedAt column exists in Products table
+            bool createdAtColumnExists = false;
+            using (var cmd = conn.CreateCommand())
+            {
+                if (context.Database.IsSqlite())
+                {
+                    cmd.CommandText = "PRAGMA table_info(Products);";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader.GetString(1).Equals("CreatedAt", StringComparison.OrdinalIgnoreCase))
+                            {
+                                createdAtColumnExists = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    cmd.CommandText = "SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND LOWER(table_name) = 'products' AND LOWER(column_name) = 'createdat';";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        createdAtColumnExists = reader.Read();
+                    }
+                }
+            }
+
+            if (!createdAtColumnExists)
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    if (context.Database.IsSqlite())
+                    {
+                        cmd.CommandText = @"ALTER TABLE ""Products"" ADD COLUMN ""CreatedAt"" TEXT NULL;";
+                    }
+                    else
+                    {
+                        cmd.CommandText = @"ALTER TABLE ""Products"" ADD COLUMN ""CreatedAt"" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;";
+                    }
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public static void Seed(AppDbContext context)
         {
+            // First run dynamic schema checks/updates to keep live database aligned
+            EnsureSchemaUpToDate(context);
+
             // Seed default admin user
             if (!context.AdminUsers.Any())
             {
