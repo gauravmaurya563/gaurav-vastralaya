@@ -11,9 +11,17 @@ builder.Services.AddControllers();
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
     ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Register PostgreSQL DbContext (Neon.tech on production, local pg for dev)
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+// Register DbContext: SQLite locally in Development, PostgreSQL in Production
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlite("Data Source=app.db"));
+}
+else
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(connectionString));
+}
 
 // Register services as Scoped (since they depend on DbContext)
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -58,6 +66,7 @@ if (!app.Environment.IsProduction())
     app.UseHttpsRedirection();
 }
 
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();

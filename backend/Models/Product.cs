@@ -11,5 +11,7 @@ namespace backend.Models
         public string Fabric { get; set; } = string.Empty;
         public string Occasion { get; set; } = string.Empty;
         public List<string> Sizes { get; set; } = new();
+        public List<string> Images { get; set; } = new();
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

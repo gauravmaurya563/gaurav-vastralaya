@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.Models;
+using backend.Services;
 
 namespace backend.Data
 {
@@ -9,6 +10,18 @@ namespace backend.Data
     {
         public static void Seed(AppDbContext context)
         {
+            // Seed default admin user
+            if (!context.AdminUsers.Any())
+            {
+                context.AdminUsers.Add(new AdminUser
+                {
+                    Username = "admin",
+                    PasswordHash = PasswordHelper.HashPassword("AdminPassword123!"),
+                    CreatedAt = DateTime.UtcNow
+                });
+                context.SaveChanges();
+            }
+
             // Always clear the old database to ensure we get exactly our 50 new items
             if (context.Products.Any()) {
                 context.Products.RemoveRange(context.Products);
@@ -52,7 +65,9 @@ namespace backend.Data
                         PriceRange = $"₹{priceBase:N0} - ₹{(priceBase + random.Next(10, 50)*100):N0}",
                         Fabric = "Premium Blend",
                         Occasion = "All Occasions",
-                        Sizes = new() { "S", "M", "L", "XL" }
+                        Sizes = new() { "S", "M", "L", "XL" },
+                        Images = new() { imageUrl },
+                        CreatedAt = DateTime.UtcNow.AddDays(-i)
                     });
                 }
 
