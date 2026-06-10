@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import Header from './components/Header'
 import Hero from './components/Hero'
@@ -8,8 +8,10 @@ import BookingForm from './components/BookingForm'
 import About from './components/About'
 import Footer from './components/Footer'
 import ProductModal from './components/ProductModal'
+import AdminLogin from './components/AdminLogin'
+import AdminDashboard from './components/AdminDashboard'
 
-const PRODUCTS = [
+const STATIC_PRODUCTS = [
   {
     id: 1,
     name: 'Ajrakh Printed Cotton Fabric',
@@ -79,17 +81,82 @@ const PRODUCTS = [
 ]
 
 function App() {
+  const [products, setProducts] = useState([])
   const [filterCategory, setFilterCategory] = useState('All')
   const [selectedProduct, setSelectedProduct] = useState(null)
+  
+  // Simple state-based routing
+  const [currentPath, setCurrentPath] = useState(window.location.pathname)
+  const [adminUser, setAdminUser] = useState(localStorage.getItem('adminUser') || null)
+
+  useEffect(() => {
+    fetchProducts()
+
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname)
+    }
+    window.addEventListener('popstate', handleLocationChange)
+    return () => window.removeEventListener('popstate', handleLocationChange)
+  }, [])
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:5121/api/Products')
+      if (!response.ok) {
+        throw new Error('Backend request failed')
+      }
+      const data = await response.json()
+      // Sort products by CreatedAt descending so new arrivals are at the top
+      const sorted = data.sort((a, b) => new Date(b.createdAt || b.CreatedAt) - new Date(a.createdAt || a.CreatedAt))
+      setProducts(sorted)
+    } catch (err) {
+      console.warn('Using local static products fallback because backend is offline:', err.message)
+      setProducts(STATIC_PRODUCTS)
+    }
+  }
+
+  const handleLoginSuccess = (user) => {
+    setAdminUser(user)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken')
+    localStorage.removeItem('adminUser')
+    setAdminUser(null)
+  }
+
+  const navigate = (path) => {
+    window.history.pushState({}, '', path)
+    setCurrentPath(path)
+  }
 
   const filteredProducts = useMemo(() => {
-    if (filterCategory === 'All') return PRODUCTS
-    return PRODUCTS.filter((product) => product.category === filterCategory)
-  }, [filterCategory])
+    if (filterCategory === 'All') return products
+    return products.filter((product) => product.category === filterCategory || product.Category === filterCategory)
+  }, [products, filterCategory])
 
   const handleSelectCategory = (category) => {
     setFilterCategory(category)
     document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  // Admin View Rendering
+  if (currentPath === '/admin') {
+    return (
+      <div className="site-shell">
+        <div className="promo-strip" style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 24px' }}>
+          <span>Administrator Portal</span>
+          <a href="#" onClick={(e) => { e.preventDefault(); navigate('/'); fetchProducts(); }} style={{ color: '#fff', textDecoration: 'underline', fontWeight: 'bold' }}>
+            Go to Online Store
+          </a>
+        </div>
+        {adminUser ? (
+          <AdminDashboard username={adminUser} onLogout={handleLogout} />
+        ) : (
+          <AdminLogin onLoginSuccess={handleLoginSuccess} />
+        )}
+      </div>
+    )
   }
 
   return (

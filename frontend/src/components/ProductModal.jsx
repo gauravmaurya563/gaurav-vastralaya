@@ -3,6 +3,14 @@ import { MessageCircle, Ruler, ShieldCheck, X } from 'lucide-react'
 
 function ProductModal({ product, onClose }) {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
+  const imagesList = product.images || product.Images || (product.imageUrl ? [product.imageUrl] : [])
+  const [activeImage, setActiveImage] = useState(product.imageUrl)
+
+  const getFullImageUrl = (url) => {
+    if (!url) return 'https://loremflickr.com/400/600/fashion'
+    if (url.startsWith('http') || url.startsWith('data:')) return url
+    return `http://localhost:5121${url}`
+  }
 
   const openWhatsApp = () => {
     const message = `Hi Gaurav Vastralay, I am interested in ${product.name}. Size/length: ${selectedSize}.`
@@ -16,8 +24,23 @@ function ProductModal({ product, onClose }) {
         <button className="modal-close" onClick={onClose} aria-label="Close">
           <X size={20} />
         </button>
-        <div className="modal-image">
-          <img src={product.imageUrl} alt={product.name} />
+        <div className="modal-image-container">
+          <div className="modal-main-image">
+            <img src={getFullImageUrl(activeImage)} alt={product.name} />
+          </div>
+          {imagesList.length > 1 && (
+            <div className="modal-thumbnails-row">
+              {imagesList.map((imgUrl, idx) => (
+                <button
+                  key={idx}
+                  className={`modal-thumbnail-btn ${activeImage === imgUrl ? 'active' : ''}`}
+                  onClick={() => setActiveImage(imgUrl)}
+                >
+                  <img src={getFullImageUrl(imgUrl)} alt={`${product.name} view ${idx + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="modal-content">
           <p className="eyebrow">{product.category}</p>

@@ -5,6 +5,12 @@ const CATEGORIES = ['All', 'Fabrics', 'Sarees', 'Suits', 'Kurtas', 'Mens', 'Comb
 const FILTERS = ['Price', 'Fabric', 'Color', 'Occasion', 'Availability']
 
 function Catalog({ products, activeCategory, onCategoryChange, onProductClick }) {
+  const getFullImageUrl = (url) => {
+    if (!url) return 'https://loremflickr.com/400/600/fashion'
+    if (url.startsWith('http') || url.startsWith('data:')) return url
+    return `http://localhost:5121${url}`
+  }
+
   return (
     <section id="catalog" className="catalog-section">
       <div className="catalog-top">
@@ -52,7 +58,7 @@ function Catalog({ products, activeCategory, onCategoryChange, onProductClick })
               <article className="product-card" key={product.id} onClick={() => onProductClick(product)}>
                 <div className="product-media">
                   <span className="sale-tag">New</span>
-                  <img src={product.imageUrl} alt={product.name} />
+                  <img src={getFullImageUrl(product.imageUrl)} alt={product.name} />
                 </div>
                 <div className="product-info">
                   <p>{product.category}</p>
