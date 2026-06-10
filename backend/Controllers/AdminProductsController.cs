@@ -25,74 +25,81 @@ namespace backend.Controllers
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreateProduct([FromForm] ProductUploadDto dto)
         {
-            if (dto == null || string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrWhiteSpace(dto.Category))
+            try
             {
-                return BadRequest(new { message = "Product Name and Category are required." });
-            }
-
-            // Verify uploads folder exists
-            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            if (!Directory.Exists(uploadsPath))
-            {
-                Directory.CreateDirectory(uploadsPath);
-            }
-
-            var imageUrls = new List<string>();
-
-            if (dto.Files != null && dto.Files.Count > 0)
-            {
-                foreach (var file in dto.Files)
+                if (dto == null || string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrWhiteSpace(dto.Category))
                 {
-                    if (file.Length > 0)
+                    return BadRequest(new { message = "Product Name and Category are required." });
+                }
+
+                // Verify uploads folder exists
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploadsPath))
+                {
+                    Directory.CreateDirectory(uploadsPath);
+                }
+
+                var imageUrls = new List<string>();
+
+                if (dto.Files != null && dto.Files.Count > 0)
+                {
+                    foreach (var file in dto.Files)
                     {
-                        // Generate unique file name
-                        var extension = Path.GetExtension(file.FileName);
-                        var uniqueFileName = $"{Guid.NewGuid():N}{extension}";
-                        var filePath = Path.Combine(uploadsPath, uniqueFileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        if (file.Length > 0)
                         {
-                            await file.CopyToAsync(stream);
-                        }
+                            // Generate unique file name
+                            var extension = Path.GetExtension(file.FileName);
+                            var uniqueFileName = $"{Guid.NewGuid():N}{extension}";
+                            var filePath = Path.Combine(uploadsPath, uniqueFileName);
 
-                        // Save the relative URL path
-                        imageUrls.Add($"/uploads/{uniqueFileName}");
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
+
+                            // Save the relative URL path
+                            imageUrls.Add($"/uploads/{uniqueFileName}");
+                        }
                     }
                 }
-            }
 
-            // Sizes processing (comma-separated, default to standard list if empty)
-            var sizesList = new List<string>();
-            if (!string.IsNullOrWhiteSpace(dto.Sizes))
-            {
-                sizesList = dto.Sizes.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                     .Select(s => s.Trim())
-                                     .ToList();
-            }
-            else
-            {
-                sizesList = new List<string> { "S", "M", "L", "XL" };
-            }
+                // Sizes processing (comma-separated, default to standard list if empty)
+                var sizesList = new List<string>();
+                if (!string.IsNullOrWhiteSpace(dto.Sizes))
+                {
+                    sizesList = dto.Sizes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                         .Select(s => s.Trim())
+                                         .ToList();
+                }
+                else
+                {
+                    sizesList = new List<string> { "S", "M", "L", "XL" };
+                }
 
-            var product = new Product
-            {
-                Name = dto.Name,
-                Description = dto.Description ?? string.Empty,
-                Category = dto.Category,
-                Fabric = dto.Fabric ?? "Premium Blend",
-                Occasion = dto.Occasion ?? "All Occasions",
-                PriceRange = dto.PriceRange ?? "Contact for price",
-                Sizes = sizesList,
-                Images = imageUrls,
-                // ImageUrl is the first image or a placeholder
-                ImageUrl = imageUrls.FirstOrDefault() ?? "https://loremflickr.com/400/600/fashion",
-                CreatedAt = DateTime.UtcNow
-            };
+                var product = new Product
+                {
+                    Name = dto.Name,
+                    Description = dto.Description ?? string.Empty,
+                    Category = dto.Category,
+                    Fabric = dto.Fabric ?? "Premium Blend",
+                    Occasion = dto.Occasion ?? "All Occasions",
+                    PriceRange = dto.PriceRange ?? "Contact for price",
+                    Sizes = sizesList,
+                    Images = imageUrls,
+                    // ImageUrl is the first image or a placeholder
+                    ImageUrl = imageUrls.FirstOrDefault() ?? "https://loremflickr.com/400/600/fashion",
+                    CreatedAt = DateTime.UtcNow
+                };
 
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-            
-            return CreatedAtAction("GetProduct", "Products", new { id = product.Id }, product);
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+                
+                return StatusCode(201, product);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during product creation.", error = ex.Message, stack = ex.StackTrace });
+            }
         }
     }
 
