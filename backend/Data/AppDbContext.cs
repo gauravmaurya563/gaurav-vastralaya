@@ -22,12 +22,16 @@ namespace backend.Data
             modelBuilder.Entity<Product>().Property(p => p.Category).IsRequired().HasMaxLength(50);
             modelBuilder.Entity<Product>().Property(p => p.PriceRange).IsRequired().HasMaxLength(100);
             
-            // Value converters to support list serialization on SQLite and Postgres
-            modelBuilder.Entity<Product>().Property(p => p.Sizes)
-                .HasConversion(
-                    v => string.Join(',', v),
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
-                );
+            // Value converters to support list serialization on SQLite
+            if (Database.IsSqlite())
+            {
+                modelBuilder.Entity<Product>().Property(p => p.Sizes)
+                    .HasConversion(
+                        v => string.Join(',', v),
+                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                    );
+            }
+
             modelBuilder.Entity<Product>().Property(p => p.Images)
                 .HasConversion(
                     v => string.Join(',', v),
