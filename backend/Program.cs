@@ -34,8 +34,9 @@ builder.Services.AddOpenApi();
 var allowedOrigins = new[]
 {
     "http://localhost:5173",                         // Local React Dev
-    "https://gaurav-vastralyal.vercel.app",         // Vercel Production (update after deploy)
-    // Add any other origins here if needed
+    "https://gaurav-vastralyal.vercel.app",         // Vercel Production with l
+    "https://gaurav-vastralay.vercel.app",          // Vercel Production without l
+    "https://gaurav-vastralaya.vercel.app",         // Vercel Production alternative
 };
 
 builder.Services.AddCors(options =>
