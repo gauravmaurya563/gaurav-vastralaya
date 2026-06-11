@@ -3,7 +3,7 @@ import React from 'react'
 const DEFAULT_CATEGORIES = [
   { name: 'Fabrics', imageUrl: '/assets/shirting_fabric.png' },
   { name: 'Sarees', imageUrl: '/assets/cat_saree.png' },
-  { name: 'Suits', imageUrl: '/assets/cat_suit.png' },
+  { name: 'Suit Material', imageUrl: '/assets/cat_suit.png' },
   { name: 'Kurtas', imageUrl: '/assets/readymade_kurta.png' },
   { name: 'Mens', imageUrl: '/assets/cat_shirt.png' },
   { name: 'Combos', imageUrl: '/assets/cat_combo.png' }
@@ -22,7 +22,7 @@ function Categories({ products, onSelectCategory }) {
       return cat === target || 
              (target === 'fabrics' && cat === 'fabric') ||
              (target === 'sarees' && cat === 'saree') ||
-             (target === 'suits' && cat === 'suit') ||
+             (target === 'suit material' && (cat === 'suit' || cat === 'suits' || cat === 'suit material')) ||
              (target === 'kurtas' && cat === 'kurta') ||
              (target === 'mens' && cat.includes('men')) ||
              (target === 'combos' && cat === 'combo');

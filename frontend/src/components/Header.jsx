@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Heart, Menu, Search, ShoppingBag, User, X } from 'lucide-react'
 import Logo from './Logo'
 
-const MENU = ['Fabrics', 'Sarees', 'Suits', 'Kurtas', 'Mens', 'Combos', 'New Arrivals', 'Sale']
+const MENU = ['Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos', 'New Arrivals', 'Sale']
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false)

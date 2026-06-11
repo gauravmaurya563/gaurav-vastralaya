@@ -25,7 +25,7 @@ function Footer() {
           <h3>Shop</h3>
           <a href="#catalog">Fabrics</a>
           <a href="#catalog">Sarees</a>
-          <a href="#catalog">Suits</a>
+          <a href="#catalog">Suit Material</a>
           <a href="#customize">Custom Print</a>
         </div>
         <div>

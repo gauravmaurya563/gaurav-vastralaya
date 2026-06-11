@@ -37,14 +37,14 @@ const STATIC_PRODUCTS = [
   },
   {
     id: 3,
-    name: 'Designer Georgette Suit Set',
-    description: 'A ready-to-style suit set with fluid drape, subtle embellishment, and a matching dupatta for polished festive dressing.',
-    category: 'Suits',
+    name: 'Premium Suit Fabric',
+    description: 'High-quality unstitched suit material with fine texture. Get it stitched in your preferred style — perfect for formal and festive occasions.',
+    category: 'Suit Material',
     imageUrl: '/assets/suit_designer.png',
-    priceRange: 'Rs. 2,499 - Rs. 8,999',
-    fabric: 'Georgette',
-    occasion: 'Festive and party wear',
-    sizes: ['S', 'M', 'L', 'XL', 'XXL']
+    priceRange: 'Rs. 1,299 - Rs. 4,999 / meter',
+    fabric: 'Georgette / Wool Blend',
+    occasion: 'Formal and festive wear',
+    sizes: ['1.5 meter cut', '2.25 meter suit piece', 'Custom cut']
   },
   {
     id: 4,
@@ -134,7 +134,13 @@ function App() {
 
   const filteredProducts = useMemo(() => {
     if (filterCategory === 'All') return products
-    return products.filter((product) => product.category === filterCategory || product.Category === filterCategory)
+    return products.filter((product) => {
+      const cat = (product.category || product.Category || '').toLowerCase()
+      const filter = filterCategory.toLowerCase()
+      // 'Suit Material' on the UI maps to 'suit' or 'suits' stored in DB
+      if (filter === 'suit material') return cat === 'suit' || cat === 'suits' || cat === 'suit material'
+      return cat === filter || cat === filter.replace(/s$/, '') // handle plural/singular
+    })
   }, [products, filterCategory])
 
   const handleSelectCategory = (category) => {

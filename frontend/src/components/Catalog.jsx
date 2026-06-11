@@ -1,7 +1,7 @@
 import React from 'react'
 import { ChevronDown, SlidersHorizontal } from 'lucide-react'
 
-const CATEGORIES = ['All', 'Fabrics', 'Sarees', 'Suits', 'Kurtas', 'Mens', 'Combos']
+const CATEGORIES = ['All', 'Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos']
 const FILTERS = ['Price', 'Fabric', 'Color', 'Occasion', 'Availability']
 
 const SORT_OPTIONS = [

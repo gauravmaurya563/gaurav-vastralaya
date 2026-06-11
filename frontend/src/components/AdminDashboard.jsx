@@ -32,7 +32,7 @@ export default function AdminDashboard({ username, onLogout }) {
   const [uploadSuccess, setUploadSuccess] = useState('')
   const [uploadError, setUploadError] = useState('')
 
-  const categories = ['Saree', 'T-Shirt', 'Shirt', 'Suit', 'Jeans', 'Combo', 'Kurtas']
+  const categories = ['Saree', 'T-Shirt', 'Shirt', 'Suit Material', 'Jeans', 'Combo', 'Kurtas']
   const sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'Free size', 'Blouse piece included']
 
   useEffect(() => {
@@ -278,7 +278,7 @@ export default function AdminDashboard({ username, onLogout }) {
                   cursor: 'pointer'
                 }}
               >
-                {['All', 'Saree', 'T-Shirt', 'Shirt', 'Suit', 'Jeans', 'Combo', 'Kurtas'].map(cat => (
+                {['All', 'Saree', 'T-Shirt', 'Shirt', 'Suit Material', 'Jeans', 'Combo', 'Kurtas'].map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
@@ -297,8 +297,8 @@ export default function AdminDashboard({ username, onLogout }) {
                 const filterCat = manageCategory.toLowerCase();
                 return cat === filterCat || 
                        (filterCat === 'saree' && cat === 'sarees') ||
-                       (filterCat === 'suit' && cat === 'suits') ||
-                       (filterCat === 'kurta' && cat === 'kurtas') ||
+                       (filterCat === 'suit material' && (cat === 'suit' || cat === 'suits' || cat === 'suit material')) ||
+                       (filterCat === 'kurtas' && cat === 'kurta') ||
                        (filterCat === 'combo' && cat === 'combos');
               }).map((product) => {
                 const getFullImageUrl = (url) => {
