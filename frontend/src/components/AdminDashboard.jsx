@@ -7,6 +7,7 @@ export default function AdminDashboard({ username, onLogout }) {
   const [activeTab, setActiveTab] = useState('upload') // 'upload' or 'manage'
   const [productsList, setProductsList] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(false)
+  const [manageCategory, setManageCategory] = useState('All')
 
   // Product form state
   const [name, setName] = useState('')
@@ -256,8 +257,33 @@ export default function AdminDashboard({ username, onLogout }) {
 
       {activeTab === 'manage' ? (
         <div className="manage-catalog-panel">
-          <h2>Product Catalog Management</h2>
-          <p className="panel-sub">Reorder items by assigning sort order numbers (lower numbers show first) or permanently delete products from the database.</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '20px', borderBottom: '1px solid var(--line)', paddingBottom: '16px' }}>
+            <div>
+              <h2>Product Catalog Management</h2>
+              <p className="panel-sub" style={{ margin: 0 }}>Reorder items by assigning sort order numbers (lower numbers show first) or permanently delete products from the database.</p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <label style={{ fontSize: '11px', fontWeight: '800', textTransform: 'uppercase', color: 'var(--muted)', letterSpacing: '0.05em' }}>Filter Category:</label>
+              <select 
+                value={manageCategory} 
+                onChange={(e) => setManageCategory(e.target.value)}
+                style={{
+                  padding: '8px 16px',
+                  border: '1px solid var(--line)',
+                  borderRadius: '4px',
+                  background: '#fff',
+                  color: 'var(--ink)',
+                  fontWeight: 'bold',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                {['All', 'Saree', 'T-Shirt', 'Shirt', 'Suit', 'Jeans', 'Combo', 'Kurtas'].map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           
           {loadingProducts ? (
             <p style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)' }}>Loading catalog items...</p>
@@ -265,7 +291,16 @@ export default function AdminDashboard({ username, onLogout }) {
             <p style={{ textAlign: 'center', padding: '40px', color: 'var(--muted)' }}>No products in catalog yet.</p>
           ) : (
             <div className="manage-products-list">
-              {productsList.map((product) => {
+              {productsList.filter(p => {
+                if (manageCategory === 'All') return true;
+                const cat = (p.category || p.Category || '').toLowerCase();
+                const filterCat = manageCategory.toLowerCase();
+                return cat === filterCat || 
+                       (filterCat === 'saree' && cat === 'sarees') ||
+                       (filterCat === 'suit' && cat === 'suits') ||
+                       (filterCat === 'kurta' && cat === 'kurtas') ||
+                       (filterCat === 'combo' && cat === 'combos');
+              }).map((product) => {
                 const getFullImageUrl = (url) => {
                   if (!url) return 'https://loremflickr.com/400/600/fashion'
                   if (url.startsWith('http') || url.startsWith('data:')) return url
