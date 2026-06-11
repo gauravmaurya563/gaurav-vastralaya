@@ -8,6 +8,7 @@ function Catalog({ products, activeCategory, onCategoryChange, onProductClick })
   const getFullImageUrl = (url) => {
     if (!url) return 'https://loremflickr.com/400/600/fashion'
     if (url.startsWith('http') || url.startsWith('data:')) return url
+    if (url.startsWith('/assets/')) return url
     const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5121/api'
     const ASSET_BASE = API_BASE.replace(/\/api$/, '')
     return `${ASSET_BASE}${url}`
