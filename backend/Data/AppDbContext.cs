@@ -21,6 +21,7 @@ namespace backend.Data
             modelBuilder.Entity<Product>().Property(p => p.Name).IsRequired().HasMaxLength(150);
             modelBuilder.Entity<Product>().Property(p => p.Category).IsRequired().HasMaxLength(50);
             modelBuilder.Entity<Product>().Property(p => p.PriceRange).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity<Product>().Property(p => p.SortOrder).HasDefaultValue(0);
             
             // Value converters to support list serialization on SQLite
             if (Database.IsSqlite())

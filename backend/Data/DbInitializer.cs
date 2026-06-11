@@ -142,6 +142,44 @@ namespace backend.Data
                     cmd.ExecuteNonQuery();
                 }
             }
+
+            // 4. Check if SortOrder column exists in Products table
+            bool sortOrderColumnExists = false;
+            using (var cmd = conn.CreateCommand())
+            {
+                if (context.Database.IsSqlite())
+                {
+                    cmd.CommandText = "PRAGMA table_info(Products);";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (reader.GetString(1).Equals("SortOrder", StringComparison.OrdinalIgnoreCase))
+                            {
+                                sortOrderColumnExists = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    cmd.CommandText = "SELECT 1 FROM information_schema.columns WHERE table_schema = 'public' AND LOWER(table_name) = 'products' AND LOWER(column_name) = 'sortorder';";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        sortOrderColumnExists = reader.Read();
+                    }
+                }
+            }
+
+            if (!sortOrderColumnExists)
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"ALTER TABLE ""Products"" ADD COLUMN ""SortOrder"" INTEGER DEFAULT 0 NOT NULL;";
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         public static void Seed(AppDbContext context)
@@ -188,10 +226,7 @@ namespace backend.Data
                     string category = categories[random.Next(categories.Length)];
                     string adjective = adjectives[random.Next(adjectives.Length)];
                     
-                    // Use a unique placeholder image from loremflickr using the category as a keyword
-                    // The 'lock' parameter ensures the URL is unique and stable per product ID
-                    string searchTerm = category.ToLower().Replace("combo", "fabric").Replace("t-shirt", "tshirt");
-                    string imageUrl = $"https://loremflickr.com/400/600/fashion,{searchTerm}?lock={i}";
+                    string imageUrl = imageMap.ContainsKey(category) ? imageMap[category] : "/assets/cat_saree.png";
                     
                     int priceBase = random.Next(10, 150) * 100;
                     

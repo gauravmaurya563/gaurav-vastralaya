@@ -22,7 +22,10 @@ namespace backend.Services
 
         public IEnumerable<Product> GetAllProducts()
         {
-            return _context.Products.ToList();
+            return _context.Products
+                           .OrderBy(p => p.SortOrder)
+                           .ThenByDescending(p => p.CreatedAt)
+                           .ToList();
         }
 
         public Product? GetProductById(int id)

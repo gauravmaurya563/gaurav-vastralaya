@@ -1652,4 +1652,109 @@ img {
   }
 }
 
+/* Catalog Management Styles */
+.admin-tab-btn {
+  font-family: inherit;
+  font-size: 14px;
+}
+.admin-tab-btn:hover {
+  background: rgba(122, 28, 46, 0.1);
+}
+.admin-tab-btn.active:hover {
+  background: #7A1C2E !important;
+}
+.manage-catalog-panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 34px;
+  box-shadow: var(--shadow);
+  border-radius: 4px;
+  width: 100%;
+}
+.manage-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.manage-product-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+  transition: all 0.2s ease;
+}
+.manage-product-row:hover {
+  border-color: var(--brand);
+}
+.manage-product-img {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+}
+.manage-product-details {
+  flex: 1;
+}
+.manage-product-details h4 {
+  margin: 0 0 4px;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--ink);
+}
+.manage-product-details p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.manage-product-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.sort-order-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sort-order-input-group label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sort-order-field {
+  width: 70px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  text-align: center;
+}
+.delete-product-btn {
+  background: #fde8e8;
+  border: 1px solid #f8b4b4;
+  color: #c81e1e;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+.delete-product-btn:hover {
+  background: #c81e1e;
+  color: #fff;
+  border-color: #c81e1e;
+}
+
+
 

@@ -165,7 +165,7 @@ function App() {
       <Header />
       <main>
         <Hero />
-        <Categories onSelectCategory={handleSelectCategory} />
+        <Categories products={products} onSelectCategory={handleSelectCategory} />
         <Catalog
           products={filteredProducts}
           activeCategory={filterCategory}

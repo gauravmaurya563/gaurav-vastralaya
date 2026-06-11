@@ -108,6 +108,75 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = "An error occurred during product creation.", error = fullErrorMessage, stack = ex.StackTrace });
             }
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return NotFound(new { message = $"Product with ID {id} not found." });
+                }
+
+                // Delete associated uploaded files from wwwroot/uploads
+                foreach (var imgUrl in product.Images)
+                {
+                    if (imgUrl.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imgUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            try
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                // Log or ignore file deletion error
+                            }
+                        }
+                    }
+                }
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Product permanently deleted." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during product deletion.", error = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}/sort-order")]
+        public async Task<IActionResult> UpdateSortOrder(int id, [FromBody] SortOrderDto dto)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return NotFound(new { message = $"Product with ID {id} not found." });
+                }
+
+                product.SortOrder = dto.SortOrder;
+                await _context.SaveChangesAsync();
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during sort order update.", error = ex.Message });
+            }
+        }
+    }
+
+    public class SortOrderDto
+    {
+        public int SortOrder { get; set; }
     }
 
     public class ProductUploadDto
