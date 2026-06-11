@@ -12,6 +12,7 @@ namespace backend.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AdminUser> AdminUsers { get; set; }
+        public DbSet<AppUser> AppUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,6 +47,13 @@ namespace backend.Data
 
             modelBuilder.Entity<AdminUser>().Property(u => u.Username).IsRequired().HasMaxLength(50);
             modelBuilder.Entity<AdminUser>().Property(u => u.PasswordHash).IsRequired().HasMaxLength(255);
+
+            // AppUser (customer) configuration
+            modelBuilder.Entity<AppUser>().Property(u => u.FullName).IsRequired().HasMaxLength(100);
+            modelBuilder.Entity<AppUser>().Property(u => u.Email).IsRequired().HasMaxLength(150);
+            modelBuilder.Entity<AppUser>().Property(u => u.Phone).HasMaxLength(20);
+            modelBuilder.Entity<AppUser>().Property(u => u.PasswordHash).IsRequired().HasMaxLength(255);
+            modelBuilder.Entity<AppUser>().HasIndex(u => u.Email).IsUnique();
         }
     }
 }

@@ -4,8 +4,13 @@ import Logo from './Logo'
 
 const MENU = ['Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos', 'New Arrivals', 'Sale']
 
-function Header() {
+function Header({ user, onUserClick }) {
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Compute initials for avatar when logged in
+  const initials = user?.fullName
+    ? user.fullName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+    : null
 
   return (
     <header className="site-header">
@@ -28,9 +33,20 @@ function Header() {
         </label>
 
         <div className="header-actions">
-          <button className="icon-button" aria-label="Account">
-            <User size={20} />
+          {/* User / Account button */}
+          <button
+            className={`icon-button ${initials ? 'user-logged-in' : ''}`}
+            aria-label={initials ? `My Account (${user.fullName})` : 'Sign In'}
+            onClick={onUserClick}
+            title={initials ? `Signed in as ${user.fullName}` : 'Sign In / Register'}
+          >
+            {initials ? (
+              <span className="header-user-avatar">{initials}</span>
+            ) : (
+              <User size={20} />
+            )}
           </button>
+
           <button className="icon-button badge" aria-label="Wishlist">
             <Heart size={20} />
             <span>0</span>
@@ -68,6 +84,13 @@ function Header() {
                 {item}
               </a>
             ))}
+            {/* Mobile login/account button */}
+            <button
+              className="drawer-user-btn"
+              onClick={() => { setMenuOpen(false); onUserClick?.() }}
+            >
+              {initials ? `👤 ${user.fullName}` : '👤 Sign In / Register'}
+            </button>
           </div>
         </div>
       )}
