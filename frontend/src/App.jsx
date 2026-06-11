@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import Header from './components/Header'
 import Hero from './components/Hero'
+import NewArrivals from './components/NewArrivals'
 import Categories from './components/Categories'
 import Catalog from './components/Catalog'
 import BookingForm from './components/BookingForm'
@@ -165,6 +166,14 @@ function App() {
       <Header />
       <main>
         <Hero />
+        <NewArrivals
+          products={products}
+          onProductClick={setSelectedProduct}
+          onViewAll={() => {
+            setFilterCategory('All')
+            document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
+          }}
+        />
         <Categories products={products} onSelectCategory={handleSelectCategory} />
         <Catalog
           products={filteredProducts}

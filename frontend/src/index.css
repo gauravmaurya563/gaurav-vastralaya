@@ -1756,5 +1756,341 @@ img {
   border-color: #c81e1e;
 }
 
+/* ===== NEW ARRIVALS SECTION ===== */
 
+@keyframes na-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes na-float-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes na-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* Scrolling decorative band at top */
+.new-arrivals-band {
+  width: 100%;
+  overflow: hidden;
+  background: var(--brand);
+  color: #fff;
+  padding: 10px 0;
+  display: flex;
+  gap: 32px;
+  white-space: nowrap;
+  animation: na-marquee 24s linear infinite;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.new-arrivals-band span {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.new-arrivals-section {
+  margin: 0;
+  background: linear-gradient(180deg, #fffdf9 0%, #fdf5ea 60%, #fffdf9 100%);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.new-arrivals-inner {
+  width: min(1320px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 52px 0 56px;
+}
+
+/* Header row */
+.new-arrivals-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+
+.new-arrivals-title-block {
+  display: grid;
+  gap: 8px;
+}
+
+.new-arrivals-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.new-arrivals-heading {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(34px, 5vw, 56px);
+  color: var(--ink);
+  line-height: 1;
+}
+
+.new-arrivals-sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  max-width: 360px;
+}
+
+.new-arrivals-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.na-arrow-btn {
+  width: 42px;
+  height: 42px;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.na-arrow-btn:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.na-view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 20px;
+  background: var(--ink);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.na-view-all-btn:hover {
+  background: var(--brand);
+  transform: translateX(2px);
+}
+
+/* Horizontal scroll rail */
+.na-scroll-rail {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.na-scroll-rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual card */
+.na-card {
+  flex: 0 0 220px;
+  scroll-snap-align: start;
+  cursor: pointer;
+  animation: na-float-in 0.5s ease both;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 14px rgba(35, 28, 22, 0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.na-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(35, 28, 22, 0.14);
+}
+
+/* First (hero) card is wider */
+.na-card--hero {
+  flex: 0 0 300px;
+}
+
+.na-card-media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--soft);
+}
+
+.na-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.na-card:hover .na-card-media img {
+  transform: scale(1.06);
+}
+
+/* "New" sparkle badge */
+.na-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(143, 31, 45, 0.35);
+}
+
+/* Hover overlay */
+.na-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(33, 28, 24, 0.45);
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.na-card-overlay.visible {
+  opacity: 1;
+}
+
+.na-quick-view-btn {
+  background: #fff;
+  color: var(--brand);
+  border: 0;
+  padding: 10px 22px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: transform 0.2s;
+  transform: translateY(6px);
+}
+
+.na-card-overlay.visible .na-quick-view-btn {
+  transform: translateY(0);
+}
+
+.na-quick-view-btn:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* Card text area */
+.na-card-info {
+  padding: 14px 16px 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.na-card-category {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.na-card-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.na-card-price {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--brand);
+}
+
+/* Dots below scroll rail */
+.na-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+
+.na-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+  display: block;
+}
+
+.na-dot:first-child {
+  background: var(--brand);
+  width: 18px;
+  border-radius: 3px;
+}
+
+/* Decorative bottom divider */
+.new-arrivals-divider {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--brand) 30%, var(--gold) 70%, transparent);
+  opacity: 0.3;
+}
+
+/* ===== NEW ARRIVALS RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .new-arrivals-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .na-card {
+    flex: 0 0 175px;
+  }
+
+  .na-card--hero {
+    flex: 0 0 240px;
+  }
+}
 
