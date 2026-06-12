@@ -115,5 +115,36 @@ namespace backend.Controllers
                 });
             }
         }
+
+        [HttpGet("seed")]
+        public IActionResult TriggerSeed()
+        {
+            try
+            {
+                DbInitializer.Seed(_context);
+                int count = _context.Products.Count();
+                return Ok(new {
+                    success = true,
+                    message = "Seed completed successfully",
+                    totalProducts = count
+                });
+            }
+            catch (Exception ex)
+            {
+                var fullError = ex.Message;
+                var inner = ex.InnerException;
+                while (inner != null)
+                {
+                    fullError += " --> " + inner.Message;
+                    inner = inner.InnerException;
+                }
+                return StatusCode(500, new {
+                    success = false,
+                    error = "Seed failed",
+                    details = fullError,
+                    stack = ex.StackTrace
+                });
+            }
+        }
     }
 }
