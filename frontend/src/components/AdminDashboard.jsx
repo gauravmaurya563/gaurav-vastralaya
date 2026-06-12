@@ -10,6 +10,7 @@ export default function AdminDashboard({ username, onLogout }) {
   const [manageCategory, setManageCategory] = useState('All')
 
   // Product form state
+  const [editingProduct, setEditingProduct] = useState(null)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('Saree')
@@ -17,6 +18,7 @@ export default function AdminDashboard({ username, onLogout }) {
   const [fabric, setFabric] = useState('')
   const [occasion, setOccasion] = useState('')
   const [sizes, setSizes] = useState(['S', 'M', 'L', 'XL'])
+  const [isSoldOut, setIsSoldOut] = useState(false)
   const [files, setFiles] = useState([])
   const [previews, setPreviews] = useState([])
 
@@ -34,6 +36,13 @@ export default function AdminDashboard({ username, onLogout }) {
 
   const categories = ['Saree', 'T-Shirt', 'Shirt', 'Suit Material', 'Jeans', 'Combo', 'Kurtas']
   const sizeOptions = ['S', 'M', 'L', 'XL', 'XXL', 'Free size', 'Blouse piece included']
+
+  const getFullImageUrl = (url) => {
+    if (!url) return 'https://loremflickr.com/400/600/fashion'
+    if (url.startsWith('http') || url.startsWith('data:')) return url
+    if (url.startsWith('/assets/')) return url
+    return `${API_BASE.replace(/\/api$/, '')}${url}`
+  }
 
   useEffect(() => {
     fetchAdminCount()
@@ -120,14 +129,53 @@ export default function AdminDashboard({ username, onLogout }) {
     }
   }
 
+  const handleStartEdit = (product) => {
+    setEditingProduct(product)
+    setName(product.name || product.Name || '')
+    setDescription(product.description || product.Description || '')
+    setCategory(product.category || product.Category || 'Saree')
+    setPriceRange(product.priceRange || product.PriceRange || '')
+    setFabric(product.fabric || product.Fabric || '')
+    setOccasion(product.occasion || product.Occasion || '')
+    setIsSoldOut(product.isSoldOut || product.IsSoldOut || false)
+
+    const rawSizes = product.sizes || product.Sizes || []
+    setSizes(rawSizes)
+
+    // Populate previews
+    const imgs = product.images || product.Images || (product.imageUrl || product.ImageUrl ? [product.imageUrl || product.ImageUrl] : [])
+    setPreviews(imgs.map(url => getFullImageUrl(url)))
+    setFiles([]) // No new files initially selected
+
+    setUploadError('')
+    setUploadSuccess('')
+    setActiveTab('upload') // Jump to the form tab
+  }
+
+  const handleCancelEdit = () => {
+    setEditingProduct(null)
+    setName('')
+    setDescription('')
+    setCategory('Saree')
+    setPriceRange('')
+    setFabric('')
+    setOccasion('')
+    setSizes(['S', 'M', 'L', 'XL'])
+    setIsSoldOut(false)
+    setFiles([])
+    setPreviews([])
+    setUploadError('')
+    setUploadSuccess('')
+  }
+
   const handleProductSubmit = async (e) => {
     e.preventDefault()
     setUploadError('')
     setUploadSuccess('')
     setUploadLoading(true)
 
-    if (files.length === 0) {
-      setUploadError('Please select at least one HD picture showing the product sides.')
+    if (!editingProduct && files.length === 0) {
+      setUploadError('Please select at least one HD picture showing the product sides.');
       setUploadLoading(false)
       return
     }
@@ -141,31 +189,32 @@ export default function AdminDashboard({ username, onLogout }) {
       formData.append('Fabric', fabric)
       formData.append('Occasion', occasion)
       formData.append('Sizes', sizes.join(','))
+      formData.append('IsSoldOut', isSoldOut)
 
       files.forEach((file) => {
         formData.append('Files', file)
       })
 
-      const response = await fetch(`${API_BASE}/AdminProducts`, {
-        method: 'POST',
+      const url = editingProduct
+        ? `${API_BASE}/AdminProducts/${editingProduct.id || editingProduct.Id}`
+        : `${API_BASE}/AdminProducts`
+      const method = editingProduct ? 'PUT' : 'POST'
+
+      const response = await fetch(url, {
+        method: method,
         body: formData,
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.message || 'Product upload failed')
+        throw new Error(data.message || 'Product save failed')
       }
 
-      setUploadSuccess('Product uploaded and successfully added to the catalog!')
+      setUploadSuccess(editingProduct ? 'Product details updated successfully!' : 'Product uploaded and successfully added to the catalog!')
       fetchProductsList()
-      // Reset form
-      setName('')
-      setDescription('')
-      setPriceRange('')
-      setFabric('')
-      setOccasion('')
-      setFiles([])
-      setPreviews([])
+      
+      // Reset form / mode
+      handleCancelEdit()
     } catch (err) {
       setUploadError(err.message)
     } finally {
@@ -217,7 +266,12 @@ export default function AdminDashboard({ username, onLogout }) {
       <div className="admin-tabs-nav" style={{ display: 'flex', gap: '12px', marginBottom: '24px', borderBottom: '1px solid var(--line)', paddingBottom: '12px' }}>
         <button
           type="button"
-          onClick={() => setActiveTab('upload')}
+          onClick={() => {
+            if (activeTab === 'upload' && editingProduct) {
+              handleCancelEdit()
+            }
+            setActiveTab('upload')
+          }}
           className={`admin-tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
           style={{
             padding: '10px 20px',
@@ -232,11 +286,15 @@ export default function AdminDashboard({ username, onLogout }) {
             transition: 'all 0.2s'
           }}
         >
-          Publish Product
+          {editingProduct ? 'Edit Product' : 'Publish Product'}
         </button>
         <button
           type="button"
-          onClick={() => { setActiveTab('manage'); fetchProductsList(); }}
+          onClick={() => {
+            handleCancelEdit()
+            setActiveTab('manage')
+            fetchProductsList()
+          }}
           className={`admin-tab-btn ${activeTab === 'manage' ? 'active' : ''}`}
           style={{
             padding: '10px 20px',
@@ -301,13 +359,6 @@ export default function AdminDashboard({ username, onLogout }) {
                        (filterCat === 'kurtas' && cat === 'kurta') ||
                        (filterCat === 'combo' && cat === 'combos');
               }).map((product) => {
-                const getFullImageUrl = (url) => {
-                  if (!url) return 'https://loremflickr.com/400/600/fashion'
-                  if (url.startsWith('http') || url.startsWith('data:')) return url
-                  if (url.startsWith('/assets/')) return url
-                  return `${API_BASE.replace(/\/api$/, '')}${url}`
-                }
-                
                 return (
                   <div key={product.id || product.Id} className="manage-product-row">
                     <img 
@@ -331,6 +382,25 @@ export default function AdminDashboard({ username, onLogout }) {
                       </div>
                       <button 
                         type="button" 
+                        className="edit-product-btn"
+                        style={{
+                          background: 'var(--sage)',
+                          color: '#fff',
+                          border: 'none',
+                          padding: '8px 14px',
+                          borderRadius: '4px',
+                          fontWeight: '800',
+                          textTransform: 'uppercase',
+                          fontSize: '11px',
+                          marginRight: '8px',
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => handleStartEdit(product)}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        type="button" 
                         className="delete-product-btn"
                         onClick={() => handleDeleteProduct(product.id || product.Id)}
                       >
@@ -347,8 +417,12 @@ export default function AdminDashboard({ username, onLogout }) {
         <div className="admin-dashboard-grid">
           {/* Left Side: Product Upload Form */}
           <div className="dashboard-panel main-upload-panel">
-            <h2>Upload New HD Product</h2>
-            <p className="panel-sub">Add detailed descriptions, sizes, price ranges, and upload multiple HD side photos.</p>
+            <h2>{editingProduct ? 'Edit Catalog Product' : 'Upload New HD Product'}</h2>
+            <p className="panel-sub">
+              {editingProduct 
+                ? 'Update descriptions, sizes, price ranges, or upload replacement images.' 
+                : 'Add detailed descriptions, sizes, price ranges, and upload multiple HD side photos.'}
+            </p>
 
             <form onSubmit={handleProductSubmit} className="dashboard-form">
               {uploadSuccess && <div className="dashboard-alert success">{uploadSuccess}</div>}
@@ -413,6 +487,20 @@ export default function AdminDashboard({ username, onLogout }) {
                 </div>
               </div>
 
+              <div className="form-group" style={{ marginBottom: '20px', background: 'var(--soft)', padding: '12px', borderRadius: '4px', border: '1px solid var(--line)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none', margin: 0 }}>
+                  <input
+                    type="checkbox"
+                    checked={isSoldOut}
+                    onChange={(e) => setIsSoldOut(e.target.checked)}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '12px', fontWeight: '800', textTransform: 'uppercase', color: 'var(--brand)' }}>
+                    Mark as Out of Stock / Sold Out (Displays Muted Badge on Storefront)
+                  </span>
+                </label>
+              </div>
+
               <div className="form-group">
                 <label>Description Details</label>
                 <textarea
@@ -442,7 +530,11 @@ export default function AdminDashboard({ username, onLogout }) {
               </div>
 
               <div className="form-group">
-                <label>Upload HD Product Photos (Upload multiple angles/sides) *</label>
+                <label>
+                  {editingProduct 
+                    ? 'Upload Replacement Product Photos (Optional - leaving empty keeps current images)' 
+                    : 'Upload HD Product Photos (Upload multiple angles/sides) *'}
+                </label>
                 <div className="file-uploader-box">
                   <input
                     type="file"
@@ -455,7 +547,7 @@ export default function AdminDashboard({ username, onLogout }) {
                   />
                   <label htmlFor="product-images-input" className="file-input-trigger">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                    <span>Select HD Pictures</span>
+                    <span>{editingProduct ? 'Change Pictures' : 'Select HD Pictures'}</span>
                   </label>
                   {files.length > 0 && <span className="selected-count-badge">{files.length} file(s) selected</span>}
                 </div>
@@ -472,9 +564,32 @@ export default function AdminDashboard({ username, onLogout }) {
                 )}
               </div>
 
-              <button type="submit" className="form-submit-button" disabled={uploadLoading}>
-                {uploadLoading ? 'Uploading details & pictures...' : 'Save & Publish Product'}
-              </button>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button type="submit" className="form-submit-button" style={{ flex: 1 }} disabled={uploadLoading}>
+                  {uploadLoading 
+                    ? (editingProduct ? 'Updating product details...' : 'Uploading details & pictures...') 
+                    : (editingProduct ? 'Update Product Details' : 'Save & Publish Product')}
+                </button>
+                {editingProduct && (
+                  <button 
+                    type="button" 
+                    className="cancel-edit-btn"
+                    onClick={handleCancelEdit}
+                    style={{
+                      background: 'var(--muted)',
+                      color: '#fff',
+                      border: '0',
+                      padding: '0 24px',
+                      borderRadius: '4px',
+                      fontWeight: '800',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
             </form>
           </div>
 

@@ -11,8 +11,6 @@ import Footer from './components/Footer'
 import ProductModal from './components/ProductModal'
 import AdminLogin from './components/AdminLogin'
 import AdminDashboard from './components/AdminDashboard'
-import UserLoginModal from './components/UserLoginModal'
-import UserAccountPage from './components/UserAccountPage'
 
 const STATIC_PRODUCTS = [
   {
@@ -92,12 +90,6 @@ function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [adminUser, setAdminUser] = useState(localStorage.getItem('adminUser') || null)
 
-  // User auth state
-  const [showUserModal, setShowUserModal] = useState(false)
-  const [userData, setUserData] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('userData') || 'null') } catch { return null }
-  })
-
   useEffect(() => {
     fetchProducts()
 
@@ -107,6 +99,31 @@ function App() {
     window.addEventListener('popstate', handleLocationChange)
     return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
+
+  // Handle auto-opening product detail modal from query parameters
+  useEffect(() => {
+    if (products.length > 0) {
+      const params = new URLSearchParams(window.location.search)
+      const queryId = params.get('product')
+      if (queryId) {
+        const product = products.find(p => String(p.id || p.Id) === String(queryId))
+        if (product) {
+          setSelectedProduct(product)
+        }
+      }
+    }
+  }, [products])
+
+  // Sync URL query parameter when product modal is opened / closed
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    if (selectedProduct) {
+      url.searchParams.set('product', selectedProduct.id || selectedProduct.Id)
+    } else {
+      url.searchParams.delete('product')
+    }
+    window.history.replaceState({}, '', url.pathname + url.search)
+  }, [selectedProduct])
 
   const fetchProducts = async () => {
     try {
@@ -135,27 +152,6 @@ function App() {
     setAdminUser(null)
   }
 
-  // User auth handlers
-  const handleUserLoginSuccess = (user) => {
-    setUserData(user)
-    setShowUserModal(false)
-  }
-
-  const handleUserLogout = () => {
-    localStorage.removeItem('userToken')
-    localStorage.removeItem('userData')
-    setUserData(null)
-    navigate('/')
-  }
-
-  const handleUserIconClick = () => {
-    if (userData) {
-      navigate('/account')
-    } else {
-      setShowUserModal(true)
-    }
-  }
-
   const navigate = (path) => {
     window.history.pushState({}, '', path)
     setCurrentPath(path)
@@ -175,20 +171,6 @@ function App() {
   const handleSelectCategory = (category) => {
     setFilterCategory(category)
     document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  // Account View Rendering
-  if (currentPath === '/account') {
-    return (
-      <div className="site-shell">
-        <UserAccountPage
-          user={userData}
-          onLogout={handleUserLogout}
-          onShopNow={() => navigate('/')}
-        />
-        <Analytics />
-      </div>
-    )
   }
 
   // Admin View Rendering
@@ -212,7 +194,7 @@ function App() {
 
   return (
     <div className="site-shell">
-      <Header user={userData} onUserClick={handleUserIconClick} />
+      <Header />
       <main>
         <Hero />
         <NewArrivals
@@ -236,12 +218,6 @@ function App() {
       <Footer />
       {selectedProduct && (
         <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
-      )}
-      {showUserModal && (
-        <UserLoginModal
-          onClose={() => setShowUserModal(false)}
-          onLoginSuccess={handleUserLoginSuccess}
-        />
       )}
       <Analytics />
     </div>
