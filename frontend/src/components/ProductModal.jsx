@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { MessageCircle, Ruler, ShieldCheck, X } from 'lucide-react'
+import { Check, MessageCircle, Ruler, Share2, ShieldCheck, X } from 'lucide-react'
 
 function ProductModal({ product, onClose }) {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
   const imagesList = product.images || product.Images || (product.imageUrl ? [product.imageUrl] : [])
   const [activeImage, setActiveImage] = useState(product.imageUrl)
+  const [copied, setCopied] = useState(false)
+
+  const soldOut = product.isSoldOut || product.IsSoldOut || false
 
   const getFullImageUrl = (url) => {
     if (!url) return 'https://loremflickr.com/400/600/fashion'
@@ -16,8 +19,25 @@ function ProductModal({ product, onClose }) {
   }
 
   const openWhatsApp = () => {
-    const message = `Hi Gaurav Vastralay, I am interested in ${product.name}. Size/length: ${selectedSize}.`
-    window.open(`https://wa.me/919999999999?text=${encodeURIComponent(message)}`, '_blank')
+    const whatsappNumber = import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999'
+    const name = product.name || product.Name
+    const category = product.category || product.Category || 'Clothing'
+    const fabric = product.fabric || product.Fabric || 'N/A'
+    const priceRange = product.priceRange || product.PriceRange || 'N/A'
+    
+    const message = soldOut
+      ? `Hi Gaurav Vastralay, I am interested in this design: *${name}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?`
+      : `Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* ${name}\n*Category:* ${category}\n*Fabric:* ${fabric}\n*Price Range:* ${priceRange}\n*Selected Size/Length:* ${selectedSize || 'N/A'}\n\nIs this available for ordering?`
+      
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank')
+  }
+
+  const handleShare = () => {
+    const shareUrl = `${window.location.origin}?product=${product.id || product.Id}`
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
   }
 
   return (
@@ -28,8 +48,11 @@ function ProductModal({ product, onClose }) {
           <X size={20} />
         </button>
         <div className="modal-image-container">
-          <div className="modal-main-image">
-            <img src={getFullImageUrl(activeImage)} alt={product.name} />
+          <div className="modal-main-image" style={{ position: 'relative' }}>
+            {soldOut && (
+              <span className="sale-tag" style={{ position: 'absolute', top: '16px', left: '16px', background: 'var(--muted)', zIndex: 5 }}>Sold Out</span>
+            )}
+            <img src={getFullImageUrl(activeImage)} alt={product.name} style={{ filter: soldOut ? 'grayscale(30%)' : 'none' }} />
           </div>
           {imagesList.length > 1 && (
             <div className="modal-thumbnails-row">
@@ -48,7 +71,7 @@ function ProductModal({ product, onClose }) {
         <div className="modal-content">
           <p className="eyebrow">{product.category}</p>
           <h2>{product.name}</h2>
-          <strong className="modal-price">{product.priceRange}</strong>
+          <strong className="modal-price" style={{ opacity: soldOut ? 0.6 : 1 }}>{product.priceRange}</strong>
           <p>{product.description}</p>
 
           <div className="modal-specs">
@@ -56,14 +79,15 @@ function ProductModal({ product, onClose }) {
             <span><Ruler size={17} /> {product.occasion}</span>
           </div>
 
-          <div className="size-picker">
-            <span>Size / length</span>
+          <div className="size-picker" style={{ opacity: soldOut ? 0.5 : 1, pointerEvents: soldOut ? 'none' : 'auto' }}>
+            <span>Size / length {soldOut && ' (Unavailable)'}</span>
             <div>
               {product.sizes.map((size) => (
                 <button
                   key={size}
                   className={selectedSize === size ? 'selected' : ''}
                   onClick={() => setSelectedSize(size)}
+                  disabled={soldOut}
                 >
                   {size}
                 </button>
@@ -71,9 +95,36 @@ function ProductModal({ product, onClose }) {
             </div>
           </div>
 
-          <button className="primary-link modal-action" onClick={openWhatsApp}>
-            Enquire on WhatsApp <MessageCircle size={17} />
-          </button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '24px' }}>
+            <button 
+              className="primary-link modal-action" 
+              style={{ flex: 1, background: soldOut ? 'var(--muted)' : 'var(--brand)' }} 
+              onClick={openWhatsApp}
+            >
+              {soldOut ? 'Restock Inquiry' : 'Enquire on WhatsApp'} <MessageCircle size={17} />
+            </button>
+            <button
+              className="primary-link"
+              style={{
+                background: copied ? 'var(--sage)' : 'var(--soft)',
+                color: copied ? '#fff' : 'var(--ink)',
+                border: '1px solid var(--line)',
+                minHeight: '46px',
+                padding: '0 16px',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+              onClick={handleShare}
+              title="Copy direct product link to clipboard"
+            >
+              {copied ? <Check size={18} /> : <Share2 size={18} />}
+              <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{copied ? 'Copied' : 'Share'}</span>
+            </button>
+          </div>
         </div>
       </article>
     </div>

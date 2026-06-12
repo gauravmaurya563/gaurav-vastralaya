@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronDown, SlidersHorizontal } from 'lucide-react'
+import { ChevronDown, MessageCircle, SlidersHorizontal } from 'lucide-react'
 
 const CATEGORIES = ['All', 'Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos']
 const FILTERS = ['Price', 'Fabric', 'Color', 'Occasion', 'Availability']
@@ -115,19 +115,57 @@ function Catalog({ products, activeCategory, onCategoryChange, onProductClick })
         <div className="product-area">
           <div className="product-count">{sortedProducts.length} products found</div>
           <div className="product-grid">
-            {sortedProducts.map((product) => (
-              <article className="product-card" key={product.id} onClick={() => onProductClick(product)}>
-                <div className="product-media">
-                  <span className="sale-tag">New</span>
-                  <img src={getFullImageUrl(product.imageUrl)} alt={product.name} />
-                </div>
-                <div className="product-info">
-                  <p>{product.category}</p>
-                  <h3>{product.name}</h3>
-                  <strong>{product.priceRange}</strong>
-                </div>
-              </article>
-            ))}
+            {sortedProducts.map((product) => {
+              const soldOut = product.isSoldOut || product.IsSoldOut || false;
+              return (
+                <article className={`product-card ${soldOut ? 'sold-out' : ''}`} key={product.id || product.Id} onClick={() => onProductClick(product)}>
+                  <div className="product-media">
+                    {soldOut ? (
+                      <span className="sale-tag" style={{ background: 'var(--muted)' }}>Sold Out</span>
+                    ) : (
+                      <span className="sale-tag">New</span>
+                    )}
+                    <img src={getFullImageUrl(product.imageUrl || product.ImageUrl)} alt={product.name || product.Name} style={{ filter: soldOut ? 'grayscale(30%)' : 'none' }} />
+                    
+                    {/* WhatsApp Quick Inquiry Overlay */}
+                    <div className="product-overlay">
+                      <button 
+                        className="quick-inquire-btn"
+                        style={{ background: soldOut ? 'var(--muted)' : '#25D366', boxShadow: soldOut ? '0 4px 15px rgba(0,0,0,0.2)' : '0 4px 15px rgba(37, 211, 102, 0.4)' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const whatsappNumber = import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999';
+                          const msg = soldOut
+                            ? `Hi Gaurav Vastralay, I am interested in ${product.name || product.Name} which is currently out of stock. Will this design be restocked soon?`
+                            : `Hi Gaurav Vastralay, I am interested in ${product.name || product.Name} (${product.category || product.Category || 'Clothing'}). Is this available?`;
+                          window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+                        }}
+                      >
+                        <MessageCircle size={15} /> {soldOut ? 'Restock Info' : 'WhatsApp Inquiry'}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="product-info">
+                    <p>{product.category || product.Category}</p>
+                    <h3>{product.name || product.Name}</h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                      <strong style={{ opacity: soldOut ? 0.6 : 1 }}>{product.priceRange || product.PriceRange}</strong>
+                      {soldOut ? (
+                        <span style={{ fontSize: '11px', color: 'var(--muted)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                          <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--muted)' }}></span>
+                          Sold Out
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: 'var(--sage)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                          <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--sage)' }}></span>
+                          Available
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
       </div>
