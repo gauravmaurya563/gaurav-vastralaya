@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Check, MessageCircle, Ruler, Share2, ShieldCheck, X } from 'lucide-react'
+import { interpolateTemplate } from '../utils/templateHelper'
 
-function ProductModal({ product, onClose }) {
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0])
+function ProductModal({ product, onClose, settings }) {
+  const [selectedSize, setSelectedSize] = useState(product.sizes && product.sizes.length > 0 ? product.sizes[0] : '')
   const imagesList = product.images || product.Images || (product.imageUrl ? [product.imageUrl] : [])
   const [activeImage, setActiveImage] = useState(product.imageUrl)
   const [copied, setCopied] = useState(false)
@@ -19,16 +20,12 @@ function ProductModal({ product, onClose }) {
   }
 
   const openWhatsApp = () => {
-    const whatsappNumber = import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999'
-    const name = product.name || product.Name
-    const category = product.category || product.Category || 'Clothing'
-    const fabric = product.fabric || product.Fabric || 'N/A'
-    const priceRange = product.priceRange || product.PriceRange || 'N/A'
+    const whatsappNumber = settings?.WhatsAppNumber || import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999'
+    const template = soldOut
+      ? (settings?.RestockTemplate || 'Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?')
+      : (settings?.InquiryTemplate || 'Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* {ProductName}\n*Category:* {Category}\n*Fabric:* {Fabric}\n*Price Range:* {Price}\n*Selected Size/Length:* {Size}\n\nIs this available for ordering?');
     
-    const message = soldOut
-      ? `Hi Gaurav Vastralay, I am interested in this design: *${name}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?`
-      : `Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* ${name}\n*Category:* ${category}\n*Fabric:* ${fabric}\n*Price Range:* ${priceRange}\n*Selected Size/Length:* ${selectedSize || 'N/A'}\n\nIs this available for ordering?`
-      
+    const message = interpolateTemplate(template, product, selectedSize)
     window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank')
   }
 

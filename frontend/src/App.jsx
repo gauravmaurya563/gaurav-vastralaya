@@ -90,8 +90,15 @@ function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname)
   const [adminUser, setAdminUser] = useState(localStorage.getItem('adminUser') || null)
 
+  const [settings, setSettings] = useState({
+    WhatsAppNumber: import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999',
+    InquiryTemplate: 'Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* {ProductName}\n*Category:* {Category}\n*Fabric:* {Fabric}\n*Price Range:* {Price}\n*Selected Size/Length:* {Size}\n\nIs this available for ordering?',
+    RestockTemplate: 'Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?'
+  })
+
   useEffect(() => {
     fetchProducts()
+    fetchSettings()
 
     const handleLocationChange = () => {
       setCurrentPath(window.location.pathname)
@@ -99,6 +106,23 @@ function App() {
     window.addEventListener('popstate', handleLocationChange)
     return () => window.removeEventListener('popstate', handleLocationChange)
   }, [])
+
+  const fetchSettings = async () => {
+    try {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5121/api'
+      const response = await fetch(`${API_BASE}/Settings`)
+      if (!response.ok) {
+        throw new Error('Backend request failed')
+      }
+      const data = await response.json()
+      setSettings(prev => ({
+        ...prev,
+        ...data
+      }))
+    } catch (err) {
+      console.warn('Using default/env settings because backend is offline or unconfigured:', err.message)
+    }
+  }
 
   // Handle auto-opening product detail modal from query parameters
   useEffect(() => {
@@ -184,7 +208,7 @@ function App() {
           </a>
         </div>
         {adminUser ? (
-          <AdminDashboard username={adminUser} onLogout={handleLogout} />
+          <AdminDashboard username={adminUser} onLogout={handleLogout} settings={settings} onSettingsUpdate={fetchSettings} />
         ) : (
           <AdminLogin onLoginSuccess={handleLoginSuccess} />
         )}
@@ -194,7 +218,7 @@ function App() {
 
   return (
     <div className="site-shell">
-      <Header />
+      <Header settings={settings} />
       <main>
         <Hero />
         <NewArrivals
@@ -211,13 +235,14 @@ function App() {
           activeCategory={filterCategory}
           onCategoryChange={setFilterCategory}
           onProductClick={setSelectedProduct}
+          settings={settings}
         />
         <BookingForm />
         <About />
       </main>
       <Footer />
       {selectedProduct && (
-        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} settings={settings} />
       )}
       <Analytics />
     </div>

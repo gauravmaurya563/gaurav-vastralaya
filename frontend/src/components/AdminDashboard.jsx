@@ -2,12 +2,86 @@ import React, { useState, useEffect } from 'react'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5121/api'
 
-export default function AdminDashboard({ username, onLogout }) {
+export default function AdminDashboard({ username, onLogout, settings, onSettingsUpdate }) {
   // Tab state
-  const [activeTab, setActiveTab] = useState('upload') // 'upload' or 'manage'
+  const [activeTab, setActiveTab] = useState('upload') // 'upload' or 'manage' or 'settings'
   const [productsList, setProductsList] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(false)
   const [manageCategory, setManageCategory] = useState('All')
+
+  // WhatsApp configuration state
+  const [waNumber, setWaNumber] = useState(settings?.WhatsAppNumber || '919999999999')
+  const [inqTemplate, setInqTemplate] = useState(settings?.InquiryTemplate || '')
+  const [restockTemplate, setRestockTemplate] = useState(settings?.RestockTemplate || '')
+  const [settingsLoading, setSettingsLoading] = useState(false)
+  const [settingsSuccess, setSettingsSuccess] = useState('')
+  const [settingsError, setSettingsError] = useState('')
+
+  useEffect(() => {
+    if (settings) {
+      setWaNumber(settings.WhatsAppNumber || '919999999999')
+      setInqTemplate(settings.InquiryTemplate || '')
+      setRestockTemplate(settings.RestockTemplate || '')
+    }
+  }, [settings])
+
+  const insertPlaceholder = (textareaId, placeholder) => {
+    const textarea = document.getElementById(textareaId)
+    if (!textarea) return
+
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const text = textarea.value
+    const before = text.substring(0, start)
+    const after = text.substring(end, text.length)
+
+    const updatedText = before + placeholder + after
+    if (textareaId === 'inqTemplate') {
+      setInqTemplate(updatedText)
+    } else if (textareaId === 'restockTemplate') {
+      setRestockTemplate(updatedText)
+    }
+
+    setTimeout(() => {
+      textarea.focus()
+      textarea.selectionStart = textarea.selectionEnd = start + placeholder.length
+    }, 0)
+  }
+
+  const handleSettingsSubmit = async (e) => {
+    e.preventDefault()
+    setSettingsLoading(true)
+    setSettingsSuccess('')
+    setSettingsError('')
+
+    try {
+      const response = await fetch(`${API_BASE}/Settings`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          WhatsAppNumber: waNumber,
+          InquiryTemplate: inqTemplate,
+          RestockTemplate: restockTemplate
+        })
+      })
+
+      if (!response.ok) {
+        const errData = await response.json()
+        throw new Error(errData.message || 'Failed to save settings')
+      }
+
+      setSettingsSuccess('WhatsApp Settings saved and synchronized successfully!')
+      if (onSettingsUpdate) {
+        await onSettingsUpdate()
+      }
+    } catch (err) {
+      setSettingsError(err.message)
+    } finally {
+      setSettingsLoading(false)
+    }
+  }
 
   // Product form state
   const [editingProduct, setEditingProduct] = useState(null)
@@ -311,9 +385,31 @@ export default function AdminDashboard({ username, onLogout }) {
         >
           Manage Catalog ({productsList.length})
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            handleCancelEdit()
+            setActiveTab('settings')
+          }}
+          className={`admin-tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
+          style={{
+            padding: '10px 20px',
+            border: '0',
+            background: activeTab === 'settings' ? 'var(--brand)' : 'transparent',
+            color: activeTab === 'settings' ? '#fff' : 'var(--muted)',
+            cursor: 'pointer',
+            fontWeight: '800',
+            textTransform: 'uppercase',
+            fontSize: '12px',
+            borderRadius: '4px',
+            transition: 'all 0.2s'
+          }}
+        >
+          WhatsApp Settings
+        </button>
       </div>
 
-      {activeTab === 'manage' ? (
+      {activeTab === 'manage' && (
         <div className="manage-catalog-panel">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '20px', borderBottom: '1px solid var(--line)', paddingBottom: '16px' }}>
             <div>
@@ -413,7 +509,140 @@ export default function AdminDashboard({ username, onLogout }) {
             </div>
           )}
         </div>
-      ) : (
+      )}
+
+      {activeTab === 'settings' && (
+        <div className="whatsapp-settings-panel" style={{ background: '#fff', padding: '24px', borderRadius: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+          <div style={{ marginBottom: '20px', borderBottom: '1px solid var(--line)', paddingBottom: '16px' }}>
+            <h2>WhatsApp Configurations</h2>
+            <p className="panel-sub" style={{ margin: 0 }}>Configure the default support/inquiry phone number and the text templates triggered when a customer clicks a WhatsApp action.</p>
+          </div>
+
+          <form onSubmit={handleSettingsSubmit} className="dashboard-form">
+            {settingsSuccess && <div className="dashboard-alert success">{settingsSuccess}</div>}
+            {settingsError && <div className="dashboard-alert error">{settingsError}</div>}
+
+            <div className="form-group" style={{ marginBottom: '24px' }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>WhatsApp Contact Number (with country code, no + or spaces) *</label>
+              <input
+                type="text"
+                value={waNumber}
+                onChange={(e) => setWaNumber(e.target.value.replace(/\D/g, ''))}
+                placeholder="e.g. 919999999999"
+                required
+                disabled={settingsLoading}
+                style={{ width: '100%', padding: '12px', border: '1px solid var(--line)', borderRadius: '4px' }}
+              />
+              <small style={{ color: 'var(--muted)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+                Enter the full phone number including the country code, but excluding the leading '+' sign or '00'. For example, for India (91) and number 9999999999, enter <strong>919999999999</strong>.
+              </small>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '24px' }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>Available Product Inquiry Template *</label>
+              <textarea
+                id="inqTemplate"
+                value={inqTemplate}
+                onChange={(e) => setInqTemplate(e.target.value)}
+                placeholder="Write your template..."
+                rows="6"
+                required
+                disabled={settingsLoading}
+                style={{ width: '100%', padding: '12px', border: '1px solid var(--line)', borderRadius: '4px', fontFamily: 'monospace', fontSize: '13px', lineHeight: '1.5' }}
+              />
+              <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--muted)', marginRight: '4px' }}>Insert Placeholder:</span>
+                {['{ProductName}', '{Category}', '{Fabric}', '{Price}', '{Size}'].map((placeholder) => (
+                  <button
+                    key={placeholder}
+                    type="button"
+                    onClick={() => insertPlaceholder('inqTemplate', placeholder)}
+                    style={{
+                      background: 'var(--soft)',
+                      border: '1px solid var(--line)',
+                      borderRadius: '16px',
+                      padding: '4px 10px',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      color: 'var(--brand)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => { e.currentTarget.style.background = 'var(--brand)'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.background = 'var(--soft)'; e.currentTarget.style.color = 'var(--brand)'; }}
+                  >
+                    {placeholder}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '24px' }}>
+              <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>Sold Out / Restock Inquiry Template *</label>
+              <textarea
+                id="restockTemplate"
+                value={restockTemplate}
+                onChange={(e) => setRestockTemplate(e.target.value)}
+                placeholder="Write your restock template..."
+                rows="5"
+                required
+                disabled={settingsLoading}
+                style={{ width: '100%', padding: '12px', border: '1px solid var(--line)', borderRadius: '4px', fontFamily: 'monospace', fontSize: '13px', lineHeight: '1.5' }}
+              />
+              <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--muted)', marginRight: '4px' }}>Insert Placeholder:</span>
+                {['{ProductName}', '{Category}', '{Fabric}', '{Price}'].map((placeholder) => (
+                  <button
+                    key={placeholder}
+                    type="button"
+                    onClick={() => insertPlaceholder('restockTemplate', placeholder)}
+                    style={{
+                      background: 'var(--soft)',
+                      border: '1px solid var(--line)',
+                      borderRadius: '16px',
+                      padding: '4px 10px',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      color: 'var(--brand)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => { e.currentTarget.style.background = 'var(--brand)'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.background = 'var(--soft)'; e.currentTarget.style.color = 'var(--brand)'; }}
+                  >
+                    {placeholder}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="form-submit-button"
+              style={{
+                background: 'var(--brand)',
+                color: '#fff',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '4px',
+                fontWeight: '800',
+                textTransform: 'uppercase',
+                fontSize: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                display: 'block',
+                width: '100%',
+                marginTop: '12px'
+              }}
+              disabled={settingsLoading}
+            >
+              {settingsLoading ? 'Saving WhatsApp Settings...' : 'Save Configurations'}
+            </button>
+          </form>
+        </div>
+      )}
+
+      {activeTab === 'upload' && (
         <div className="admin-dashboard-grid">
           {/* Left Side: Product Upload Form */}
           <div className="dashboard-panel main-upload-panel">

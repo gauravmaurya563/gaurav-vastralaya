@@ -4,10 +4,10 @@ import Logo from './Logo'
 
 const MENU = ['Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos', 'New Arrivals', 'Sale']
 
-function Header({ user, onUserClick }) {
+function Header({ user, onUserClick, settings }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const whatsappNumber = import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999'
+  const whatsappNumber = settings?.WhatsAppNumber || import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999'
 
   return (
     <header className="site-header">

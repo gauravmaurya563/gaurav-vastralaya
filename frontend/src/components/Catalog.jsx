@@ -1,5 +1,6 @@
 import React from 'react'
 import { ChevronDown, MessageCircle, SlidersHorizontal } from 'lucide-react'
+import { interpolateTemplate } from '../utils/templateHelper'
 
 const CATEGORIES = ['All', 'Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos']
 const FILTERS = ['Price', 'Fabric', 'Color', 'Occasion', 'Availability']
@@ -12,7 +13,7 @@ const SORT_OPTIONS = [
   { value: 'random', label: 'Random Order' }
 ]
 
-function Catalog({ products, activeCategory, onCategoryChange, onProductClick }) {
+function Catalog({ products, activeCategory, onCategoryChange, onProductClick, settings }) {
   const [sortBy, setSortBy] = React.useState('featured')
 
   const shuffledProducts = React.useMemo(() => {
@@ -134,10 +135,12 @@ function Catalog({ products, activeCategory, onCategoryChange, onProductClick })
                         style={{ background: soldOut ? 'var(--muted)' : '#25D366', boxShadow: soldOut ? '0 4px 15px rgba(0,0,0,0.2)' : '0 4px 15px rgba(37, 211, 102, 0.4)' }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          const whatsappNumber = import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999';
-                          const msg = soldOut
-                            ? `Hi Gaurav Vastralay, I am interested in ${product.name || product.Name} which is currently out of stock. Will this design be restocked soon?`
-                            : `Hi Gaurav Vastralay, I am interested in ${product.name || product.Name} (${product.category || product.Category || 'Clothing'}). Is this available?`;
+                          const whatsappNumber = settings?.WhatsAppNumber || import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999';
+                          const template = soldOut
+                            ? (settings?.RestockTemplate || 'Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?')
+                            : (settings?.InquiryTemplate || 'Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* {ProductName}\n*Category:* {Category}\n*Fabric:* {Fabric}\n*Price Range:* {Price}\n*Selected Size/Length:* {Size}\n\nIs this available for ordering?');
+                          
+                          const msg = interpolateTemplate(template, product, '');
                           window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
                         }}
                       >
