@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using backend.Data;
+using backend.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -78,12 +79,31 @@ namespace backend.Controllers
                     }
                 }
 
+                // Test querying a product to verify EF Core mapping
+                Product? testProduct = null;
+                try
+                {
+                    testProduct = _context.Products.FirstOrDefault();
+                }
+                catch (Exception efEx)
+                {
+                    return StatusCode(500, new {
+                        version = "v1.2-diagnostics",
+                        error = "EF Core Product Query failed",
+                        details = efEx.Message,
+                        innerError = efEx.InnerException?.Message,
+                        stack = efEx.StackTrace
+                    });
+                }
+
                 return Ok(new {
                     version = "v1.2-diagnostics",
                     provider = dbProvider,
                     canConnect = canConnect,
                     tables = tables,
-                    productsColumns = columns
+                    productsColumns = columns,
+                    testProductLoaded = testProduct != null,
+                    testProductName = testProduct?.Name
                 });
             }
             catch (Exception ex)
