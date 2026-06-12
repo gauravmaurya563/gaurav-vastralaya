@@ -14,6 +14,48 @@ namespace backend.Data
             context.Database.OpenConnection();
             var conn = context.Database.GetDbConnection();
             
+            // 0. Check if Settings table exists
+            bool settingsTableExists = false;
+            using (var cmd = conn.CreateCommand())
+            {
+                if (context.Database.IsSqlite())
+                {
+                    cmd.CommandText = "SELECT 1 FROM sqlite_master WHERE type='table' AND name='Settings';";
+                }
+                else
+                {
+                    cmd.CommandText = "SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND LOWER(table_name) = 'settings';";
+                }
+                using (var reader = cmd.ExecuteReader())
+                {
+                    settingsTableExists = reader.Read();
+                }
+            }
+
+            if (!settingsTableExists)
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    if (context.Database.IsSqlite())
+                    {
+                        cmd.CommandText = @"
+                            CREATE TABLE ""Settings"" (
+                                ""Key"" TEXT NOT NULL PRIMARY KEY,
+                                ""Value"" TEXT NOT NULL
+                            );";
+                    }
+                    else
+                    {
+                        cmd.CommandText = @"
+                            CREATE TABLE ""Settings"" (
+                                ""Key"" VARCHAR(100) NOT NULL PRIMARY KEY,
+                                ""Value"" TEXT NOT NULL
+                            );";
+                    }
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
             // 1. Check if AdminUsers table exists
             bool adminUsersTableExists = false;
             using (var cmd = conn.CreateCommand())
@@ -217,6 +259,18 @@ namespace backend.Data
                     Username = "admin",
                     PasswordHash = PasswordHelper.HashPassword("AdminPassword123!"),
                     CreatedAt = DateTime.UtcNow
+                });
+                context.SaveChanges();
+            }
+
+            // Seed default settings
+            if (!context.Settings.Any())
+            {
+                context.Settings.AddRange(new List<Setting>
+                {
+                    new Setting { Key = "WhatsAppNumber", Value = "919999999999" },
+                    new Setting { Key = "InquiryTemplate", Value = "Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* {ProductName}\n*Category:* {Category}\n*Fabric:* {Fabric}\n*Price Range:* {Price}\n*Selected Size/Length:* {Size}\n\nIs this available for ordering?" },
+                    new Setting { Key = "RestockTemplate", Value = "Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?" }
                 });
                 context.SaveChanges();
             }

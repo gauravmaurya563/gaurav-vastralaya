@@ -13,6 +13,7 @@ namespace backend.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AdminUser> AdminUsers { get; set; }
         public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
