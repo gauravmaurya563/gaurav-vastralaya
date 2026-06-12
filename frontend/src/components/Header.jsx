@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Heart, Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import { Menu, MessageCircle, Search, X } from 'lucide-react'
 import Logo from './Logo'
 
 const MENU = ['Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos', 'New Arrivals', 'Sale']
@@ -7,17 +7,14 @@ const MENU = ['Fabrics', 'Sarees', 'Suit Material', 'Kurtas', 'Mens', 'Combos', 
 function Header({ user, onUserClick }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
-  // Compute initials for avatar when logged in
-  const initials = user?.fullName
-    ? user.fullName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-    : null
+  const whatsappNumber = import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999'
 
   return (
     <header className="site-header">
       <div className="promo-strip">
         <span>5 lakh+ happy customers</span>
-        <span>Buy 2 Get 1 Free</span>
-        <span>Free delivery over Rs. 849</span>
+        <span>Custom Designs & Collections</span>
+        <span>WhatsApp support active</span>
       </div>
 
       <div className="header-main">
@@ -33,28 +30,27 @@ function Header({ user, onUserClick }) {
         </label>
 
         <div className="header-actions">
-          {/* User / Account button */}
-          <button
-            className={`icon-button ${initials ? 'user-logged-in' : ''}`}
-            aria-label={initials ? `My Account (${user.fullName})` : 'Sign In'}
-            onClick={onUserClick}
-            title={initials ? `Signed in as ${user.fullName}` : 'Sign In / Register'}
+          {/* WhatsApp Support CTA */}
+          <a
+            href={`https://wa.me/${whatsappNumber}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="primary-link"
+            style={{
+              minHeight: '38px',
+              padding: '0 16px',
+              fontSize: '11px',
+              fontWeight: '800',
+              borderRadius: '20px',
+              gap: '6px',
+              background: '#25D366',
+              border: 'none',
+              boxShadow: '0 4px 10px rgba(37, 211, 102, 0.2)',
+              cursor: 'pointer'
+            }}
           >
-            {initials ? (
-              <span className="header-user-avatar">{initials}</span>
-            ) : (
-              <User size={20} />
-            )}
-          </button>
-
-          <button className="icon-button badge" aria-label="Wishlist">
-            <Heart size={20} />
-            <span>0</span>
-          </button>
-          <button className="icon-button badge" aria-label="Cart">
-            <ShoppingBag size={20} />
-            <span>0</span>
-          </button>
+            <MessageCircle size={16} /> WhatsApp Inquiry
+          </a>
         </div>
       </div>
 
@@ -84,13 +80,28 @@ function Header({ user, onUserClick }) {
                 {item}
               </a>
             ))}
-            {/* Mobile login/account button */}
-            <button
+            {/* WhatsApp CTA in mobile drawer */}
+            <a
+              href={`https://wa.me/${whatsappNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="drawer-user-btn"
-              onClick={() => { setMenuOpen(false); onUserClick?.() }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                background: '#25D366',
+                color: '#fff',
+                fontWeight: 'bold',
+                padding: '12px',
+                borderRadius: '8px',
+                marginTop: '16px',
+                textAlign: 'center'
+              }}
             >
-              {initials ? `👤 ${user.fullName}` : '👤 Sign In / Register'}
-            </button>
+              <MessageCircle size={18} /> Chat on WhatsApp
+            </a>
           </div>
         </div>
       )}
