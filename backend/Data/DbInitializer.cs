@@ -180,6 +180,28 @@ namespace backend.Data
                     cmd.ExecuteNonQuery();
                 }
             }
+
+            // 5. Ensure Sizes column in PostgreSQL is TEXT, not text[] (ARRAY)
+            if (!context.Database.IsSqlite())
+            {
+                try
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT data_type FROM information_schema.columns WHERE table_schema='public' AND LOWER(table_name)='products' AND LOWER(column_name)='sizes';";
+                        var typeName = cmd.ExecuteScalar()?.ToString();
+                        if (typeName != null && typeName.Equals("ARRAY", StringComparison.OrdinalIgnoreCase))
+                        {
+                            using (var alterCmd = conn.CreateCommand())
+                            {
+                                alterCmd.CommandText = @"ALTER TABLE ""Products"" ALTER COLUMN ""Sizes"" TYPE TEXT USING array_to_string(""Sizes"", ',');";
+                                alterCmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                }
+                catch { /* Ignore or log */ }
+            }
         }
 
         public static void Seed(AppDbContext context)
