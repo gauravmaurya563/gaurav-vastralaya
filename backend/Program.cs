@@ -26,6 +26,7 @@ else
 // Register services as Scoped (since they depend on DbContext)
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
 
 // Configure OpenAPI (Swagger)
 builder.Services.AddOpenApi();
@@ -80,6 +81,26 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.EnsureCreated(); // Auto-creates DB & Tables based on models!
+
+        // Ensure column IsSoldOut exists in SQLite
+        if (context.Database.IsSqlite())
+        {
+            try
+            {
+                context.Database.ExecuteSqlRaw("ALTER TABLE Products ADD COLUMN IsSoldOut INTEGER NOT NULL DEFAULT 0;");
+            }
+            catch { /* already exists */ }
+        }
+        // Ensure column IsSoldOut exists in PostgreSQL
+        else
+        {
+            try
+            {
+                context.Database.ExecuteSqlRaw("ALTER TABLE \"Products\" ADD COLUMN IF NOT EXISTS \"IsSoldOut\" BOOLEAN NOT NULL DEFAULT FALSE;");
+            }
+            catch { /* already exists */ }
+        }
+
         DbInitializer.Seed(context);      // Seeds catalog data if empty
     }
     catch (Exception ex)

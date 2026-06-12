@@ -13,6 +13,7 @@ namespace backend.Models
         public List<string> Sizes { get; set; } = new();
         public List<string> Images { get; set; } = new();
         public int SortOrder { get; set; } = 0;
+        public bool IsSoldOut { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

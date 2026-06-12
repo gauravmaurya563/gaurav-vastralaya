@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using backend.Data;
 using backend.Models;
+using backend.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,10 +16,12 @@ namespace backend.Controllers
     public class AdminProductsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IImageUploadService _imageUploadService;
 
-        public AdminProductsController(AppDbContext context)
+        public AdminProductsController(AppDbContext context, IImageUploadService imageUploadService)
         {
             _context = context;
+            _imageUploadService = imageUploadService;
         }
 
         [HttpPost]
@@ -32,13 +35,6 @@ namespace backend.Controllers
                     return BadRequest(new { message = "Product Name and Category are required." });
                 }
 
-                // Verify uploads folder exists
-                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                if (!Directory.Exists(uploadsPath))
-                {
-                    Directory.CreateDirectory(uploadsPath);
-                }
-
                 var imageUrls = new List<string>();
 
                 if (dto.Files != null && dto.Files.Count > 0)
@@ -47,18 +43,8 @@ namespace backend.Controllers
                     {
                         if (file.Length > 0)
                         {
-                            // Generate unique file name
-                            var extension = Path.GetExtension(file.FileName);
-                            var uniqueFileName = $"{Guid.NewGuid():N}{extension}";
-                            var filePath = Path.Combine(uploadsPath, uniqueFileName);
-
-                            using (var stream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await file.CopyToAsync(stream);
-                            }
-
-                            // Save the relative URL path
-                            imageUrls.Add($"/uploads/{uniqueFileName}");
+                            var secureUrl = await _imageUploadService.UploadImageAsync(file);
+                            imageUrls.Add(secureUrl);
                         }
                     }
                 }
@@ -88,6 +74,7 @@ namespace backend.Controllers
                     Images = imageUrls,
                     // ImageUrl is the first image or a placeholder
                     ImageUrl = imageUrls.FirstOrDefault() ?? "https://loremflickr.com/400/600/fashion",
+                    IsSoldOut = dto.IsSoldOut,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -120,24 +107,10 @@ namespace backend.Controllers
                     return NotFound(new { message = $"Product with ID {id} not found." });
                 }
 
-                // Delete associated uploaded files from wwwroot/uploads
+                // Delete associated uploaded files using image upload service
                 foreach (var imgUrl in product.Images)
                 {
-                    if (imgUrl.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imgUrl.TrimStart('/'));
-                        if (System.IO.File.Exists(filePath))
-                        {
-                            try
-                            {
-                                System.IO.File.Delete(filePath);
-                            }
-                            catch (Exception ex)
-                            {
-                                // Log or ignore file deletion error
-                            }
-                        }
-                    }
+                    await _imageUploadService.DeleteImageAsync(imgUrl);
                 }
 
                 _context.Products.Remove(product);
@@ -148,6 +121,78 @@ namespace backend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred during product deletion.", error = ex.Message });
+            }
+        }
+        [HttpPut("{id}")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductUploadDto dto)
+        {
+            try
+            {
+                if (dto == null || string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrWhiteSpace(dto.Category))
+                {
+                    return BadRequest(new { message = "Product Name and Category are required." });
+                }
+
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return NotFound(new { message = $"Product with ID {id} not found." });
+                }
+
+                product.Name = dto.Name;
+                product.Description = dto.Description ?? string.Empty;
+                product.Category = dto.Category;
+                product.Fabric = dto.Fabric ?? "Premium Blend";
+                product.Occasion = dto.Occasion ?? "All Occasions";
+                product.PriceRange = dto.PriceRange ?? "Contact for price";
+                product.IsSoldOut = dto.IsSoldOut;
+
+                // Sizes processing
+                if (!string.IsNullOrWhiteSpace(dto.Sizes))
+                {
+                    product.Sizes = dto.Sizes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                             .Select(s => s.Trim())
+                                             .ToList();
+                }
+
+                // If new files are uploaded, replace the old ones
+                if (dto.Files != null && dto.Files.Count > 0)
+                {
+                    // Delete old images
+                    foreach (var imgUrl in product.Images)
+                    {
+                        await _imageUploadService.DeleteImageAsync(imgUrl);
+                    }
+
+                    var newImageUrls = new List<string>();
+                    foreach (var file in dto.Files)
+                    {
+                        if (file.Length > 0)
+                        {
+                            var secureUrl = await _imageUploadService.UploadImageAsync(file);
+                            newImageUrls.Add(secureUrl);
+                        }
+                    }
+
+                    product.Images = newImageUrls;
+                    product.ImageUrl = newImageUrls.FirstOrDefault() ?? "https://loremflickr.com/400/600/fashion";
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                var fullErrorMessage = ex.Message;
+                var inner = ex.InnerException;
+                while (inner != null)
+                {
+                    fullErrorMessage += " --> " + inner.Message;
+                    inner = inner.InnerException;
+                }
+                return StatusCode(500, new { message = "An error occurred during product update.", error = fullErrorMessage });
             }
         }
 
@@ -188,6 +233,7 @@ namespace backend.Controllers
         public string? Fabric { get; set; }
         public string? Occasion { get; set; }
         public string? Sizes { get; set; } // Comma-separated sizes e.g., "S,M,L,XL"
+        public bool IsSoldOut { get; set; } = false;
         public List<IFormFile> Files { get; set; } = new();
     }
 }
