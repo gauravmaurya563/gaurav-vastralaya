@@ -24,20 +24,17 @@ namespace backend.Data
             modelBuilder.Entity<Product>().Property(p => p.PriceRange).IsRequired().HasMaxLength(100);
             modelBuilder.Entity<Product>().Property(p => p.SortOrder).HasDefaultValue(0);
             
-            // Value converters to support list serialization on SQLite
-            if (Database.IsSqlite())
-            {
-                modelBuilder.Entity<Product>().Property(p => p.Sizes)
-                    .HasConversion(
-                        v => string.Join(',', v),
-                        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
-                    );
-            }
+            // Value converters to support list serialization on both SQLite and PostgreSQL
+            modelBuilder.Entity<Product>().Property(p => p.Sizes)
+                .HasConversion(
+                    v => v != null ? string.Join(',', v) : string.Empty,
+                    v => !string.IsNullOrEmpty(v) ? v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>()
+                );
 
             modelBuilder.Entity<Product>().Property(p => p.Images)
                 .HasConversion(
-                    v => string.Join(',', v),
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList()
+                    v => v != null ? string.Join(',', v) : string.Empty,
+                    v => !string.IsNullOrEmpty(v) ? v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() : new List<string>()
                 );
 
             modelBuilder.Entity<Appointment>().Property(a => a.Name).IsRequired().HasMaxLength(100);
