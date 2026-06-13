@@ -1,12 +1,12 @@
 import React from 'react'
 
 const DEFAULT_CATEGORIES = [
-  { name: 'Fabrics', imageUrl: '/assets/shirting_fabric.png' },
-  { name: 'Sarees', imageUrl: '/assets/cat_saree.png' },
-  { name: 'Suit Material', imageUrl: '/assets/cat_suit.png' },
-  { name: 'Kurtas', imageUrl: '/assets/readymade_kurta.png' },
-  { name: 'Mens', imageUrl: '/assets/cat_shirt.png' },
-  { name: 'Combos', imageUrl: '/assets/cat_combo.png' }
+  { name: 'Fabrics', imageUrl: '/assets/cat_fabrics_new.png' },
+  { name: 'Sarees', imageUrl: '/assets/cat_sarees_new.png' },
+  { name: 'Suit Material', imageUrl: '/assets/cat_suit_material_new.png' },
+  { name: 'Kurtas', imageUrl: '/assets/cat_kurtas_new.png' },
+  { name: 'Mens', imageUrl: '/assets/cat_mens_new.png' },
+  { name: 'Combos', imageUrl: '/assets/cat_combos_new.png' }
 ]
 
 function Categories({ products, onSelectCategory }) {
