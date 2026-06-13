@@ -37,6 +37,16 @@ namespace backend.Controllers
 
                 var imageUrls = new List<string>();
 
+                // Add directly-provided CDN/URL images first
+                if (dto.ImageUrls != null)
+                {
+                    foreach (var imgUrl in dto.ImageUrls)
+                    {
+                        if (!string.IsNullOrWhiteSpace(imgUrl))
+                            imageUrls.Add(imgUrl);
+                    }
+                }
+
                 if (dto.Files != null && dto.Files.Count > 0)
                 {
                     foreach (var file in dto.Files)
@@ -156,22 +166,38 @@ namespace backend.Controllers
                                              .ToList();
                 }
 
-                // If new files are uploaded, replace the old ones
-                if (dto.Files != null && dto.Files.Count > 0)
+                // If new files or URLs are provided, replace the old ones
+                if ((dto.Files != null && dto.Files.Count > 0) || (dto.ImageUrls != null && dto.ImageUrls.Count > 0))
                 {
-                    // Delete old images
+                    // Delete old uploaded (non-URL) images from cloud storage
                     foreach (var imgUrl in product.Images)
                     {
-                        await _imageUploadService.DeleteImageAsync(imgUrl);
+                        if (!imgUrl.StartsWith("http") || imgUrl.Contains("cloudinary"))
+                            await _imageUploadService.DeleteImageAsync(imgUrl);
                     }
 
                     var newImageUrls = new List<string>();
-                    foreach (var file in dto.Files)
+
+                    // Add direct CDN URLs
+                    if (dto.ImageUrls != null)
                     {
-                        if (file.Length > 0)
+                        foreach (var imgUrl in dto.ImageUrls)
                         {
-                            var secureUrl = await _imageUploadService.UploadImageAsync(file);
-                            newImageUrls.Add(secureUrl);
+                            if (!string.IsNullOrWhiteSpace(imgUrl))
+                                newImageUrls.Add(imgUrl);
+                        }
+                    }
+
+                    // Add newly uploaded files
+                    if (dto.Files != null)
+                    {
+                        foreach (var file in dto.Files)
+                        {
+                            if (file.Length > 0)
+                            {
+                                var secureUrl = await _imageUploadService.UploadImageAsync(file);
+                                newImageUrls.Add(secureUrl);
+                            }
                         }
                     }
 
@@ -235,5 +261,6 @@ namespace backend.Controllers
         public string? Sizes { get; set; } // Comma-separated sizes e.g., "S,M,L,XL"
         public bool IsSoldOut { get; set; } = false;
         public List<IFormFile> Files { get; set; } = new();
+        public List<string>? ImageUrls { get; set; } // Direct CDN/image URLs
     }
 }

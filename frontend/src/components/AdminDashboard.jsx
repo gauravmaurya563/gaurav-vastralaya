@@ -94,7 +94,8 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
   const [sizes, setSizes] = useState(['S', 'M', 'L', 'XL'])
   const [isSoldOut, setIsSoldOut] = useState(false)
   const [files, setFiles] = useState([])
-  const [previews, setPreviews] = useState([])
+  const [previews, setPreviews] = useState([]) // { src: string, type: 'file'|'url', fileObj?: File }
+  const [cdnUrlInput, setCdnUrlInput] = useState('')
 
   // Register admin state
   const [newAdminUser, setNewAdminUser] = useState('')
@@ -188,11 +189,38 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files)
-    setFiles(selectedFiles)
+    const newFileEntries = selectedFiles.map((file) => ({
+      src: URL.createObjectURL(file),
+      type: 'file',
+      fileObj: file
+    }))
+    setPreviews((prev) => [...prev, ...newFileEntries])
+    setFiles((prev) => [...prev, ...selectedFiles])
+    // Reset input so same file can be re-selected
+    e.target.value = ''
+  }
 
-    // Generate previews
-    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file))
-    setPreviews(newPreviews)
+  const handleAddCdnUrl = () => {
+    const url = cdnUrlInput.trim()
+    if (!url) return
+    if (!url.startsWith('http')) {
+      alert('Please enter a valid URL starting with http:// or https://')
+      return
+    }
+    setPreviews((prev) => [...prev, { src: url, type: 'url' }])
+    setCdnUrlInput('')
+  }
+
+  const handleRemovePreview = (idx) => {
+    setPreviews((prev) => {
+      const removed = prev[idx]
+      const updated = prev.filter((_, i) => i !== idx)
+      // Also remove from files array if it was a file upload
+      if (removed.type === 'file') {
+        setFiles((prevFiles) => prevFiles.filter((f) => f !== removed.fileObj))
+      }
+      return updated
+    })
   }
 
   const handleSizeToggle = (size) => {
@@ -216,10 +244,11 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
     const rawSizes = product.sizes || product.Sizes || []
     setSizes(rawSizes)
 
-    // Populate previews
+    // Populate previews — existing images as url-type entries
     const imgs = product.images || product.Images || (product.imageUrl || product.ImageUrl ? [product.imageUrl || product.ImageUrl] : [])
-    setPreviews(imgs.map(url => getFullImageUrl(url)))
+    setPreviews(imgs.map(url => ({ src: getFullImageUrl(url), type: 'url' })))
     setFiles([]) // No new files initially selected
+    setCdnUrlInput('')
 
     setUploadError('')
     setUploadSuccess('')
@@ -238,6 +267,7 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
     setIsSoldOut(false)
     setFiles([])
     setPreviews([])
+    setCdnUrlInput('')
     setUploadError('')
     setUploadSuccess('')
   }
@@ -248,8 +278,10 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
     setUploadSuccess('')
     setUploadLoading(true)
 
-    if (!editingProduct && files.length === 0) {
-      setUploadError('Please select at least one HD picture showing the product sides.');
+    const urlOnlyPreviews = previews.filter(p => p.type === 'url')
+    const hasAnyImage = files.length > 0 || urlOnlyPreviews.length > 0
+    if (!editingProduct && !hasAnyImage) {
+      setUploadError('Please select at least one HD picture or enter a CDN image URL.');
       setUploadLoading(false)
       return
     }
@@ -265,8 +297,14 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
       formData.append('Sizes', sizes.join(','))
       formData.append('IsSoldOut', isSoldOut)
 
+      // Append file uploads
       files.forEach((file) => {
         formData.append('Files', file)
+      })
+
+      // Append CDN/URL images as a special field so backend can store them
+      urlOnlyPreviews.forEach((p) => {
+        formData.append('ImageUrls', p.src)
       })
 
       const url = editingProduct
@@ -760,10 +798,53 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
 
               <div className="form-group">
                 <label>
-                  {editingProduct 
-                    ? 'Upload Replacement Product Photos (Optional - leaving empty keeps current images)' 
-                    : 'Upload HD Product Photos (Upload multiple angles/sides) *'}
+                  {editingProduct
+                    ? 'Product Images — Upload new files or paste a CDN/image URL'
+                    : 'Product Images — Upload HD files or paste a CDN/image URL *'}
                 </label>
+
+                {/* CDN URL Input Row */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', alignItems: 'stretch' }}>
+                  <input
+                    type="url"
+                    value={cdnUrlInput}
+                    onChange={(e) => setCdnUrlInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCdnUrl(); } }}
+                    placeholder="Paste image URL (https://...) and press Add"
+                    disabled={uploadLoading}
+                    style={{
+                      flex: 1,
+                      padding: '10px 14px',
+                      border: '1px solid var(--line)',
+                      borderRadius: '6px',
+                      fontSize: '13px',
+                      outline: 'none',
+                      fontFamily: 'inherit'
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddCdnUrl}
+                    disabled={uploadLoading || !cdnUrlInput.trim()}
+                    style={{
+                      padding: '10px 18px',
+                      background: cdnUrlInput.trim() ? 'var(--sage)' : 'var(--line)',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontWeight: '800',
+                      fontSize: '12px',
+                      textTransform: 'uppercase',
+                      cursor: cdnUrlInput.trim() ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      transition: 'background 0.2s'
+                    }}
+                  >
+                    + Add URL
+                  </button>
+                </div>
+
+                {/* File Upload Box */}
                 <div className="file-uploader-box">
                   <input
                     type="file"
@@ -776,17 +857,47 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
                   />
                   <label htmlFor="product-images-input" className="file-input-trigger">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-                    <span>{editingProduct ? 'Change Pictures' : 'Select HD Pictures'}</span>
+                    <span>Upload from Device</span>
                   </label>
                   {files.length > 0 && <span className="selected-count-badge">{files.length} file(s) selected</span>}
                 </div>
 
+                {/* Image Previews with Remove Button */}
                 {previews.length > 0 && (
-                  <div className="image-previews-grid">
-                    {previews.map((src, idx) => (
-                      <div key={idx} className="preview-card">
-                        <img src={src} alt={`Preview ${idx + 1}`} />
-                        <span className="preview-label">Side {idx + 1}</span>
+                  <div className="image-previews-grid" style={{ marginTop: '12px' }}>
+                    {previews.map((item, idx) => (
+                      <div key={idx} className="preview-card" style={{ position: 'relative' }}>
+                        <img src={item.src} alt={`Preview ${idx + 1}`} />
+                        <button
+                          type="button"
+                          onClick={() => handleRemovePreview(idx)}
+                          title="Remove image"
+                          style={{
+                            position: 'absolute',
+                            top: '6px',
+                            right: '6px',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            background: 'rgba(0,0,0,0.7)',
+                            color: '#fff',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            lineHeight: 1,
+                            zIndex: 2,
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseOver={(e) => e.currentTarget.style.background = '#c0392b'}
+                          onMouseOut={(e) => e.currentTarget.style.background = 'rgba(0,0,0,0.7)'}
+                        >✕</button>
+                        <span className="preview-label" style={{ fontSize: '10px' }}>
+                          {item.type === 'url' ? '🔗 URL' : '📁 File'} #{idx + 1}
+                        </span>
                       </div>
                     ))}
                   </div>
