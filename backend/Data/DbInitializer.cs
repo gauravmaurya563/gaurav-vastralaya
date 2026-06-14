@@ -298,18 +298,18 @@ namespace backend.Data
 
             var products = new List<Product>
             {
-                // === Category: Fabrics (5 Items) ===
+                // === Category: Fabrics (4 Items) ===
                 new Product
                 {
                     Name = "Ajrakh Hand-Block Printed Cotton",
                     Description = "Soft breathable cotton fabric with traditional hand-block printed Ajrakh motifs. Perfect for custom kurtas, shirts, and everyday summer tailoring.",
                     Category = "Fabrics",
-                    ImageUrl = "/assets/shirting_fabric.png",
+                    ImageUrl = "/assets/fabric_1.png",
                     PriceRange = "₹349 - ₹899 / meter",
                     Fabric = "100% Giza Cotton",
                     Occasion = "Daily & Festive Wear",
                     Sizes = new() { "1 meter", "2.5 meters", "Custom cut" },
-                    Images = new() { "/assets/shirting_fabric.png" },
+                    Images = new() { "/assets/fabric_1.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-1)
                 },
                 new Product
@@ -317,12 +317,12 @@ namespace backend.Data
                     Name = "Indigo Dabu Dyed Cambric Cotton",
                     Description = "Deep indigo cotton fabric made using the traditional Rajasthani mud-resist Dabu printing process. High quality, organic dyes, and skin-friendly.",
                     Category = "Fabrics",
-                    ImageUrl = "/assets/shirting_fabric.png",
+                    ImageUrl = "/assets/fabric_2.png",
                     PriceRange = "₹299 - ₹799 / meter",
                     Fabric = "Cambric Cotton",
                     Occasion = "Casual Day Outings",
                     Sizes = new() { "1 meter", "2.5 meters", "Custom cut" },
-                    Images = new() { "/assets/shirting_fabric.png" },
+                    Images = new() { "/assets/fabric_2.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-2)
                 },
                 new Product
@@ -330,12 +330,12 @@ namespace backend.Data
                     Name = "Handloom Banarasi Katan Silk Brocade",
                     Description = "Exquisite pure Katan silk fabric with intricate golden zari weaving. Luxurious look and feel, ideal for wedding blouses, jackets, and royal ensembles.",
                     Category = "Fabrics",
-                    ImageUrl = "/assets/shirting_fabric.png",
+                    ImageUrl = "/assets/fabric_3.png",
                     PriceRange = "₹1,899 - ₹4,500 / meter",
                     Fabric = "Pure Katan Silk",
                     Occasion = "Wedding & Bridal Wear",
                     Sizes = new() { "1 meter", "2.5 meters", "Custom cut" },
-                    Images = new() { "/assets/shirting_fabric.png" },
+                    Images = new() { "/assets/fabric_3.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-3)
                 },
                 new Product
@@ -343,26 +343,13 @@ namespace backend.Data
                     Name = "Lucknowi Chikankari Viscose Georgette",
                     Description = "Beautiful flowing georgette material featuring traditional hand-embroidered Chikankari shadow work patterns. Perfect for dying in custom shades.",
                     Category = "Fabrics",
-                    ImageUrl = "/assets/shirting_fabric.png",
+                    ImageUrl = "/assets/fabric_4.png",
                     PriceRange = "₹899 - ₹2,499 / meter",
                     Fabric = "Viscose Georgette",
                     Occasion = "Festive Wear & Ceremonies",
                     Sizes = new() { "1 meter", "2.5 meters", "Custom cut" },
-                    Images = new() { "/assets/shirting_fabric.png" },
+                    Images = new() { "/assets/fabric_4.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-4)
-                },
-                new Product
-                {
-                    Name = "Kalamkari Natural Dye Cotton Fabric",
-                    Description = "Organic cotton fabric printed with hand-drawn Kalamkari motifs using natural mineral and plant dyes. A masterpiece of traditional art.",
-                    Category = "Fabrics",
-                    ImageUrl = "/assets/shirting_fabric.png",
-                    PriceRange = "₹399 - ₹899 / meter",
-                    Fabric = "Organic Cotton",
-                    Occasion = "Traditional Wear",
-                    Sizes = new() { "1 meter", "2.5 meters", "Custom cut" },
-                    Images = new() { "/assets/shirting_fabric.png" },
-                    CreatedAt = DateTime.UtcNow.AddMinutes(-5)
                 },
 
                 // === Category: Sarees (4 Items) ===
@@ -371,12 +358,12 @@ namespace backend.Data
                     Name = "Classic Banarasi Katan Silk Saree",
                     Description = "Royal Banarasi saree made of pure Katan silk with rich silver and golden zari work. Includes matching unstitched blouse piece.",
                     Category = "Sarees",
-                    ImageUrl = "/assets/cat_saree.png",
+                    ImageUrl = "/assets/saree_1_banarasi_red.png",
                     PriceRange = "₹8,999 - ₹24,999",
                     Fabric = "Pure Katan Silk",
                     Occasion = "Wedding & Bridal Celebration",
                     Sizes = new() { "Free size", "Blouse piece included" },
-                    Images = new() { "/assets/cat_saree.png" },
+                    Images = new() { "/assets/saree_1_banarasi_red.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-11)
                 },
                 new Product
@@ -384,12 +371,12 @@ namespace backend.Data
                     Name = "Hand-Painted Pen Kalamkari Saree",
                     Description = "Traditional cotton saree with hand-drawn Pen Kalamkari mythological tales painted using organic dyes. A unique heritage item.",
                     Category = "Sarees",
-                    ImageUrl = "/assets/cat_saree.png",
+                    ImageUrl = "/assets/saree_2_kanjeevaram_blue.png",
                     PriceRange = "₹3,499 - ₹7,999",
                     Fabric = "Chenuri Cotton",
                     Occasion = "Cultural Events & Festivities",
                     Sizes = new() { "Free size", "Blouse piece included" },
-                    Images = new() { "/assets/cat_saree.png" },
+                    Images = new() { "/assets/saree_2_kanjeevaram_blue.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-12)
                 },
                 new Product
@@ -397,12 +384,12 @@ namespace backend.Data
                     Name = "Royal Kanchipuram Brocade Saree",
                     Description = "South Indian masterpiece handwoven with pure mulberry silk and golden brocade thread borders. Reflects ultimate heritage elegance.",
                     Category = "Sarees",
-                    ImageUrl = "/assets/cat_saree.png",
+                    ImageUrl = "/assets/saree_3_chiffon_pink.png",
                     PriceRange = "₹12,999 - ₹35,000",
                     Fabric = "Mulberry Silk",
                     Occasion = "Bridal & Wedding Reception",
                     Sizes = new() { "Free size", "Blouse piece included" },
-                    Images = new() { "/assets/cat_saree.png" },
+                    Images = new() { "/assets/saree_3_chiffon_pink.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-13)
                 },
                 new Product
@@ -410,12 +397,12 @@ namespace backend.Data
                     Name = "Elegant Organza Floral Print Saree",
                     Description = "Light and airy organza saree featuring beautiful pastel floral prints and delicate hand-embroidered cutwork borders.",
                     Category = "Sarees",
-                    ImageUrl = "/assets/cat_saree.png",
+                    ImageUrl = "/assets/saree_4_paithani_green.png",
                     PriceRange = "₹1,899 - ₹4,500",
                     Fabric = "Soft Organza",
                     Occasion = "Party Wear & Receptions",
                     Sizes = new() { "Free size", "Blouse piece included" },
-                    Images = new() { "/assets/cat_saree.png" },
+                    Images = new() { "/assets/saree_4_paithani_green.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-14)
                 },
 
@@ -425,12 +412,12 @@ namespace backend.Data
                     Name = "Unstitched Banarasi Silk Suit Set",
                     Description = "Luxury Banarasi silk dress material with matching woven dupatta. Design your custom salwar kameez or heavy anarkali set.",
                     Category = "Suit Material",
-                    ImageUrl = "/assets/cat_suit.png",
+                    ImageUrl = "/assets/suit_1.png",
                     PriceRange = "₹2,499 - ₹5,999",
                     Fabric = "Banarasi Silk",
                     Occasion = "Festive Wear & Weddings",
                     Sizes = new() { "Unstitched Set" },
-                    Images = new() { "/assets/cat_suit.png" },
+                    Images = new() { "/assets/suit_1.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-21)
                 },
                 new Product
@@ -438,12 +425,12 @@ namespace backend.Data
                     Name = "Jaipuri Cotton Hand-Block Suit Set",
                     Description = "Fine cotton printed suit material with matching mulmul dupatta. Light, highly breathable, and comfortable for summer wear.",
                     Category = "Suit Material",
-                    ImageUrl = "/assets/cat_suit.png",
+                    ImageUrl = "/assets/suit_2.png",
                     PriceRange = "₹1,099 - ₹2,499",
                     Fabric = "Premium Cotton",
                     Occasion = "Daily Wear & Office",
                     Sizes = new() { "Unstitched Set" },
-                    Images = new() { "/assets/cat_suit.png" },
+                    Images = new() { "/assets/suit_2.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-22)
                 },
                 new Product
@@ -451,12 +438,12 @@ namespace backend.Data
                     Name = "Heavy Embroidered Georgette Salwar Set",
                     Description = "Chic unstitched suit material in georgette with elaborate sequin and thread embroidery. Includes soft inner lining fabric.",
                     Category = "Suit Material",
-                    ImageUrl = "/assets/cat_suit.png",
+                    ImageUrl = "/assets/suit_3.png",
                     PriceRange = "₹2,899 - ₹6,999",
                     Fabric = "Faux Georgette",
                     Occasion = "Party & Festive Wear",
                     Sizes = new() { "Unstitched Set" },
-                    Images = new() { "/assets/cat_suit.png" },
+                    Images = new() { "/assets/suit_3.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-23)
                 },
                 new Product
@@ -464,12 +451,12 @@ namespace backend.Data
                     Name = "Handloom Linen Suit Material Set",
                     Description = "Premium handloom linen top and bottom material with a gorgeous linen-silk dupatta featuring zari stripe accents.",
                     Category = "Suit Material",
-                    ImageUrl = "/assets/cat_suit.png",
+                    ImageUrl = "/assets/suit_4.png",
                     PriceRange = "₹1,899 - ₹4,200",
                     Fabric = "Handloom Linen",
                     Occasion = "Semi-Formal Events",
                     Sizes = new() { "Unstitched Set" },
-                    Images = new() { "/assets/cat_suit.png" },
+                    Images = new() { "/assets/suit_4.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-24)
                 },
 
@@ -479,12 +466,12 @@ namespace backend.Data
                     Name = "Embroidered Chanderi Kurta Set",
                     Description = "Readymade straight fit Chanderi silk kurta with delicate golden thread embroidery. Includes matching pants and dupatta.",
                     Category = "Kurtas",
-                    ImageUrl = "/assets/readymade_kurta.png",
+                    ImageUrl = "/assets/kurta_1.png",
                     PriceRange = "₹1,899 - ₹4,299",
                     Fabric = "Chanderi Silk Blend",
                     Occasion = "Festive Wear & Puja",
                     Sizes = new() { "S", "M", "L", "XL", "XXL" },
-                    Images = new() { "/assets/readymade_kurta.png" },
+                    Images = new() { "/assets/kurta_1.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-31)
                 },
                 new Product
@@ -492,12 +479,12 @@ namespace backend.Data
                     Name = "Hand-Block Printed Cotton A-Line Kurta",
                     Description = "A-line flared cotton kurta featuring beautiful hand-block Sanganeri prints. Comfortable flared fitting, perfect for daily casual wear.",
                     Category = "Kurtas",
-                    ImageUrl = "/assets/readymade_kurta.png",
+                    ImageUrl = "/assets/kurta_2.png",
                     PriceRange = "₹999 - ₹2,199",
                     Fabric = "Premium Cotton",
                     Occasion = "Daily Wear & Office",
                     Sizes = new() { "S", "M", "L", "XL", "XXL" },
-                    Images = new() { "/assets/readymade_kurta.png" },
+                    Images = new() { "/assets/kurta_2.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-32)
                 },
                 new Product
@@ -505,12 +492,12 @@ namespace backend.Data
                     Name = "Classic Chikankari Georgette Kurta",
                     Description = " Lucknowi Chikankari embroidered georgette kurta with matching inner slip. Exquisitely handcrafted, floral motifs.",
                     Category = "Kurtas",
-                    ImageUrl = "/assets/readymade_kurta.png",
+                    ImageUrl = "/assets/kurta_3.png",
                     PriceRange = "₹1,499 - ₹3,499",
                     Fabric = "Viscose Georgette",
                     Occasion = "Festivals & Luncheons",
                     Sizes = new() { "S", "M", "L", "XL", "XXL" },
-                    Images = new() { "/assets/readymade_kurta.png" },
+                    Images = new() { "/assets/kurta_3.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-33)
                 },
                 new Product
@@ -518,12 +505,12 @@ namespace backend.Data
                     Name = "Premium Rayon Front-Slit Kurta",
                     Description = "Modern front-slit straight kurta with elegant print pattern. Soft fabric, regular fit, comfortable for all-day wear.",
                     Category = "Kurtas",
-                    ImageUrl = "/assets/readymade_kurta.png",
+                    ImageUrl = "/assets/kurta_4.png",
                     PriceRange = "₹899 - ₹1,899",
                     Fabric = "Premium Rayon",
                     Occasion = "Casual Gatherings",
                     Sizes = new() { "S", "M", "L", "XL", "XXL" },
-                    Images = new() { "/assets/readymade_kurta.png" },
+                    Images = new() { "/assets/kurta_4.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-34)
                 },
 
@@ -533,12 +520,12 @@ namespace backend.Data
                     Name = "Handloom Khadi Cotton Short Kurta",
                     Description = "Classic men's short length kurta made of hand-spun Khadi cotton. Ideal pairing with jeans for a modern ethnic look.",
                     Category = "Mens",
-                    ImageUrl = "/assets/cat_shirt.png",
+                    ImageUrl = "/assets/mens_1.png",
                     PriceRange = "₹699 - ₹1,499",
                     Fabric = "Handloom Khadi",
                     Occasion = "Casual Wear",
                     Sizes = new() { "M", "L", "XL", "XXL" },
-                    Images = new() { "/assets/cat_shirt.png" },
+                    Images = new() { "/assets/mens_1.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-41)
                 },
                 new Product
@@ -546,12 +533,12 @@ namespace backend.Data
                     Name = "Classic Linen Formal Shirt Fabric",
                     Description = "Pure Irish linen unstitched shirt piece. Choose custom tailoring for a premium and breathable corporate look.",
                     Category = "Mens",
-                    ImageUrl = "/assets/cat_shirt.png",
+                    ImageUrl = "/assets/mens_2.png",
                     PriceRange = "₹899 - ₹1,999",
                     Fabric = "Pure Irish Linen",
                     Occasion = "Office & Business Casual",
                     Sizes = new() { "1.6 meter shirt cut", "2 meter custom cut" },
-                    Images = new() { "/assets/cat_shirt.png" },
+                    Images = new() { "/assets/mens_2.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-42)
                 },
                 new Product
@@ -559,12 +546,12 @@ namespace backend.Data
                     Name = "Banarasi Brocade Sherwani Fabric",
                     Description = "Extravagant Banarasi silk brocade fabric for designer men's sherwanis, wedding jackets, or royal bandhgalas.",
                     Category = "Mens",
-                    ImageUrl = "/assets/cat_shirt.png",
+                    ImageUrl = "/assets/mens_3.png",
                     PriceRange = "₹2,499 - ₹6,500 / meter",
                     Fabric = "Art Silk Brocade",
                     Occasion = "Wedding & Groomswear",
                     Sizes = new() { "1 meter", "3 meters Sherwani cut", "Custom cut" },
-                    Images = new() { "/assets/cat_shirt.png" },
+                    Images = new() { "/assets/mens_3.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-43)
                 },
                 new Product
@@ -572,12 +559,12 @@ namespace backend.Data
                     Name = "Indigo Printed Mens Cotton Shirt",
                     Description = "Regular fit casual shirt printed with organic indigo dabu patterns. Smart style for semi-formal summer gatherings.",
                     Category = "Mens",
-                    ImageUrl = "/assets/cat_shirt.png",
+                    ImageUrl = "/assets/mens_4.png",
                     PriceRange = "₹999 - ₹1,999",
                     Fabric = "Cotton Cambric",
                     Occasion = "Weekend Outings & Travel",
                     Sizes = new() { "M", "L", "XL", "XXL" },
-                    Images = new() { "/assets/cat_shirt.png" },
+                    Images = new() { "/assets/mens_4.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-44)
                 },
 
@@ -587,12 +574,12 @@ namespace backend.Data
                     Name = "Mother-Daughter Matching Saree & Lehenga Set",
                     Description = "Beautiful coordinated set featuring matching georgette saree for mother and small lehenga-choli for daughter.",
                     Category = "Combos",
-                    ImageUrl = "/assets/cat_combo.png",
+                    ImageUrl = "/assets/combo_1.png",
                     PriceRange = "₹4,999 - ₹12,999",
                     Fabric = "Soft Georgette",
                     Occasion = "Family Weddings & Receptions",
                     Sizes = new() { "Standard Saree", "Custom kids sizes" },
-                    Images = new() { "/assets/cat_combo.png" },
+                    Images = new() { "/assets/combo_1.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-51)
                 },
                 new Product
@@ -600,12 +587,12 @@ namespace backend.Data
                     Name = "Kurta & Jacket Wedding Family Combo",
                     Description = "Complete family combo set including matching Nehru jacket and kurta sets for father, son, and matching suit set for mother.",
                     Category = "Combos",
-                    ImageUrl = "/assets/cat_combo.png",
+                    ImageUrl = "/assets/combo_2.png",
                     PriceRange = "₹3,499 - ₹8,999",
                     Fabric = "Silk Cotton Blend",
                     Occasion = "Family Festive Events",
                     Sizes = new() { "Coordinated Family Set" },
-                    Images = new() { "/assets/cat_combo.png" },
+                    Images = new() { "/assets/combo_2.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-52)
                 },
                 new Product
@@ -613,12 +600,12 @@ namespace backend.Data
                     Name = "Hand-Block Printed Bedding & Curtain Set",
                     Description = "Premium home combo featuring double size bedsheet, pillow covers, and matching cotton window curtains in Rajasthani print.",
                     Category = "Combos",
-                    ImageUrl = "/assets/cat_combo.png",
+                    ImageUrl = "/assets/combo_3.png",
                     PriceRange = "₹2,299 - ₹5,500",
                     Fabric = "100% Cotton",
                     Occasion = "Home Decor & Gifting",
                     Sizes = new() { "Double Bedsheet + 2 Curtains" },
-                    Images = new() { "/assets/cat_combo.png" },
+                    Images = new() { "/assets/combo_3.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-53)
                 },
                 new Product
@@ -626,12 +613,12 @@ namespace backend.Data
                     Name = "Premium Fabric & Matching Dupatta Combo",
                     Description = "Coordinated dress fabric piece with an exquisitely designed printed dupatta. Take it to your tailor for a unique custom suit.",
                     Category = "Combos",
-                    ImageUrl = "/assets/cat_combo.png",
+                    ImageUrl = "/assets/combo_4.png",
                     PriceRange = "₹1,299 - ₹3,299",
                     Fabric = "Cotton Top + Silk Dupatta",
                     Occasion = "Ethnic Wear Gifting",
                     Sizes = new() { "2.5m Fabric + 2.25m Dupatta" },
-                    Images = new() { "/assets/cat_combo.png" },
+                    Images = new() { "/assets/combo_4.png" },
                     CreatedAt = DateTime.UtcNow.AddMinutes(-54)
                 }
             };
