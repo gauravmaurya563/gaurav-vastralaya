@@ -270,7 +270,9 @@ namespace backend.Data
                 {
                     new Setting { Key = "WhatsAppNumber", Value = "919999999999" },
                     new Setting { Key = "InquiryTemplate", Value = "Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* {ProductName}\n*Category:* {Category}\n*Fabric:* {Fabric}\n*Price Range:* {Price}\n*Selected Size/Length:* {Size}\n\nIs this available for ordering?" },
-                    new Setting { Key = "RestockTemplate", Value = "Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?" }
+                    new Setting { Key = "RestockTemplate", Value = "Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?" },
+                    new Setting { Key = "InstagramUrl", Value = "https://instagram.com/gaurav_vastralay" },
+                    new Setting { Key = "FacebookUrl", Value = "https://facebook.com/gaurav_vastralay" }
                 });
                 context.SaveChanges();
             }

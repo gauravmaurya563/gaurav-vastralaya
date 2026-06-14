@@ -9,10 +9,12 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
   const [loadingProducts, setLoadingProducts] = useState(false)
   const [manageCategory, setManageCategory] = useState('All')
 
-  // WhatsApp configuration state
+  // WhatsApp & Social configuration state
   const [waNumber, setWaNumber] = useState(settings?.WhatsAppNumber || '919999999999')
   const [inqTemplate, setInqTemplate] = useState(settings?.InquiryTemplate || '')
   const [restockTemplate, setRestockTemplate] = useState(settings?.RestockTemplate || '')
+  const [instaUrl, setInstaUrl] = useState(settings?.InstagramUrl || '')
+  const [fbUrl, setFbUrl] = useState(settings?.FacebookUrl || '')
   const [settingsLoading, setSettingsLoading] = useState(false)
   const [settingsSuccess, setSettingsSuccess] = useState('')
   const [settingsError, setSettingsError] = useState('')
@@ -22,6 +24,8 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
       setWaNumber(settings.WhatsAppNumber || '919999999999')
       setInqTemplate(settings.InquiryTemplate || '')
       setRestockTemplate(settings.RestockTemplate || '')
+      setInstaUrl(settings.InstagramUrl || '')
+      setFbUrl(settings.FacebookUrl || '')
     }
   }, [settings])
 
@@ -63,7 +67,9 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
         body: JSON.stringify({
           WhatsAppNumber: waNumber,
           InquiryTemplate: inqTemplate,
-          RestockTemplate: restockTemplate
+          RestockTemplate: restockTemplate,
+          InstagramUrl: instaUrl,
+          FacebookUrl: fbUrl
         })
       })
 
@@ -443,7 +449,7 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
             transition: 'all 0.2s'
           }}
         >
-          WhatsApp Settings
+          Configurations
         </button>
       </div>
 
@@ -574,6 +580,31 @@ export default function AdminDashboard({ username, onLogout, settings, onSetting
               <small style={{ color: 'var(--muted)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
                 Enter the full phone number including the country code, but excluding the leading '+' sign or '00'. For example, for India (91) and number 9999999999, enter <strong>919999999999</strong>.
               </small>
+            </div>
+
+            <div className="form-row-social" style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>Instagram Handle URL</label>
+                <input
+                  type="url"
+                  value={instaUrl}
+                  onChange={(e) => setInstaUrl(e.target.value)}
+                  placeholder="e.g. https://instagram.com/gaurav_vastralay"
+                  disabled={settingsLoading}
+                  style={{ width: '100%', padding: '12px', border: '1px solid var(--line)', borderRadius: '4px', background: '#fff', color: 'var(--ink)' }}
+                />
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}>Facebook Page URL</label>
+                <input
+                  type="url"
+                  value={fbUrl}
+                  onChange={(e) => setFbUrl(e.target.value)}
+                  placeholder="e.g. https://facebook.com/gaurav_vastralay"
+                  disabled={settingsLoading}
+                  style={{ width: '100%', padding: '12px', border: '1px solid var(--line)', borderRadius: '4px', background: '#fff', color: 'var(--ink)' }}
+                />
+              </div>
             </div>
 
             <div className="form-group" style={{ marginBottom: '24px' }}>

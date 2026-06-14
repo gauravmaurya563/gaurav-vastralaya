@@ -11,6 +11,7 @@ import Footer from './components/Footer'
 import ProductModal from './components/ProductModal'
 import AdminLogin from './components/AdminLogin'
 import AdminDashboard from './components/AdminDashboard'
+import SocialTrending from './components/SocialTrending'
 
 const STATIC_PRODUCTS = [
   {
@@ -93,7 +94,9 @@ function App() {
   const [settings, setSettings] = useState({
     WhatsAppNumber: import.meta.env.VITE_CONTACT_WHATSAPP || '919999999999',
     InquiryTemplate: 'Hi Gaurav Vastralay, I am interested in this clothing item:\n\n*Product:* {ProductName}\n*Category:* {Category}\n*Fabric:* {Fabric}\n*Price Range:* {Price}\n*Selected Size/Length:* {Size}\n\nIs this available for ordering?',
-    RestockTemplate: 'Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?'
+    RestockTemplate: 'Hi Gaurav Vastralay, I am interested in this design: *{ProductName}* which is currently out of stock. Could you let me know if/when this will be restocked or if I can pre-order it?',
+    InstagramUrl: 'https://instagram.com/gaurav_vastralay',
+    FacebookUrl: 'https://facebook.com/gaurav_vastralay'
   })
 
   useEffect(() => {
@@ -237,6 +240,7 @@ function App() {
           onProductClick={setSelectedProduct}
           settings={settings}
         />
+        <SocialTrending settings={settings} />
         <BookingForm />
         <About />
       </main>
